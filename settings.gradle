@@ -1,0 +1,6 @@
+rootProject.name = 'web-smart-storage'
+
+include 'domain'
+include 'data'
+include 'infra'
+include 'api-service'
