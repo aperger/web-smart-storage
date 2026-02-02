@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>hu.ps.ss</groupId>
+        <artifactId>web-smart-storage</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.glassfish.jaxb</groupId>
+                <artifactId>jaxb-bom</artifactId>
+                <version>4.0.6</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <groupId>hu.ps.ss.onlineinvoice.xml</groupId>
+    <artifactId>online-invoice-xml</artifactId>
+    <name>Online Invoice XML Module</name>
+    <description>JAXB-generated classes for Online Invoice XML handling</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+            <version>${jakarta-xml-bind.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-core</artifactId>
+            <version>${jaxb-core.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-impl</artifactId>
+            <version>${jaxb-impl.version}</version>
+        </dependency>
+
+        <!--dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-core</artifactId>
+            <version>4.0.6</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-xjc</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>xsom</artifactId>
+            <scope>compile</scope>
+        </dependency -->
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>jaxb2-maven-plugin</artifactId>
+                <version>4.1.0</version>
+                <configuration>
+                    <catalogs>
+                        <catalog>src/main/resources/xsd/osa_schemas_v3/catalog.xml</catalog>
+                    </catalogs>
+                    <outputDirectory>${project.build.directory}/generated-sources/xsd/</outputDirectory>
+                    <xjbSources>
+                        <xjbSource>src/main/resources/xjb/global.xjb</xjbSource>
+                    </xjbSources>
+                    <arguments>
+                        <argument>-XautoNameResolution</argument>
+                        <arg>-verbose</arg>
+                    </arguments>
+                    <verbose>true</verbose>
+                    <extension>true</extension>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>xjc-generate-all</id>
+                        <goals>
+                            <goal>xjc</goal>
+                        </goals>
+                        <configuration>
+                            <packageName>hu.gov.online.invoice.xml.v3</packageName>
+                            <outputDirectory>${project.build.directory}/generated-sources/xsd</outputDirectory>
+                            <sources>
+                                <source>src/main/resources/xsd/osa_schemas_v3/common.xsd</source>
+                                <source>src/main/resources/xsd/osa_schemas_v3/invoiceBase.xsd</source>
+                                <source>src/main/resources/xsd/osa_schemas_v3/invoiceData.xsd</source>
+                                <source>src/main/resources/xsd/osa_schemas_v3/serviceMetrics.xsd</source>
+                                <source>src/main/resources/xsd/osa_schemas_v3/invoiceApi.xsd</source>
+                                <source>src/main/resources/xsd/osa_schemas_v3/invoiceAnnulment.xsd</source>
+                            </sources>
+                            <xjbSources>
+                                <xjbSource>src/main/resources/xjb/global.xjb</xjbSource>
+                            </xjbSources>
+                            <clearOutputDir>true</clearOutputDir>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+
+<!--            <plugin>-->
+<!--                <groupId>org.jvnet.jaxb</groupId>-->
+<!--                <artifactId>jaxb-maven-plugin</artifactId>-->
+<!--                <version>4.0.9</version>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <id>xjc</id>-->
+<!--                        <goals>-->
+<!--                            <goal>generate</goal>-->
+<!--                        </goals>-->
+<!--                        <configuration>-->
+<!--                            <schemaDirectory>src/main/resources/xsd/osa_schemas_v3</schemaDirectory>-->
+<!--                            <schemaIncludes>-->
+<!--                                <include>*.xsd</include>-->
+<!--                            </schemaIncludes>-->
+<!--                            <generatePackage>hu.gov.online.invoice.xml.v3</generatePackage>-->
+<!--                            <generateDirectory>${project.build.directory}/generated-sources/xsd</generateDirectory>-->
+<!--                            <extension>true</extension>-->
+<!--                            <verbose>true</verbose>-->
+<!--                            <debug>false</debug>-->
+<!--                            <strict>false</strict>-->
+<!--                            <catalog>src/main/resources/xsd/osa_schemas_v3/catalog.xml</catalog>-->
+<!--                            <bindingDirectory>src/main/resources/xjb</bindingDirectory>-->
+<!--                            <bindingIncludes>-->
+<!--                                <include>*.xjb</include>-->
+<!--                            </bindingIncludes>-->
+<!--                            <args>-->
+<!--                                <arg>-XautoNameResolution</arg>-->
+<!--                                <arg>-no-header</arg>-->
+<!--                                <arg>-verbose</arg>-->
+<!--                            </args>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
+
+        </plugins>
+    </build>
+</project>

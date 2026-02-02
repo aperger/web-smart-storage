@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog" prefer="public">
+
+    <!-- Map namespace URIs to local XSD files -->
+    <uri name="http://schemas.nav.gov.hu/NTCA/1.0/common" uri="common.xsd"/>
+    <uri name="http://schemas.nav.gov.hu/OSA/3.0/base" uri="invoiceBase.xsd"/>
+    <uri name="http://schemas.nav.gov.hu/OSA/3.0/data" uri="invoiceData.xsd"/>
+    <uri name="http://schemas.nav.gov.hu/OSA/3.0/api" uri="invoiceApi.xsd"/>
+    <uri name="http://schemas.nav.gov.hu/OSA/3.0/annul" uri="invoiceAnnulment.xsd"/>
+    <uri name="http://schemas.nav.gov.hu/OSA/3.0/metrics" uri="serviceMetrics.xsd"/>
+
+    <!-- System mappings for alternative resolution -->
+    <system systemId="http://schemas.nav.gov.hu/NTCA/1.0/common" uri="common.xsd"/>
+    <system systemId="http://schemas.nav.gov.hu/OSA/3.0/base" uri="invoiceBase.xsd"/>
+    <system systemId="http://schemas.nav.gov.hu/OSA/3.0/data" uri="invoiceData.xsd"/>
+    <system systemId="http://schemas.nav.gov.hu/OSA/3.0/api" uri="invoiceApi.xsd"/>
+    <system systemId="http://schemas.nav.gov.hu/OSA/3.0/annul" uri="invoiceAnnulment.xsd"/>
+    <system systemId="http://schemas.nav.gov.hu/OSA/3.0/metrics" uri="serviceMetrics.xsd"/>
+
+</catalog>
