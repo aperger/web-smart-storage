@@ -12,10 +12,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
     "hu.ps.ss.data",
     "hu.ps.ss.infra"
 })
-public class WebSmartStorageApplication {
+public class ApiServiceApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(WebSmartStorageApplication.class, args);
+        SpringApplication.run(ApiServiceApplication.class, args);
     }
 
 }

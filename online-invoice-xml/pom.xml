@@ -75,9 +75,6 @@
                 <artifactId>jaxb2-maven-plugin</artifactId>
                 <version>4.1.0</version>
                 <configuration>
-                    <catalogs>
-                        <catalog>src/main/resources/xsd/osa_schemas_v3/catalog.xml</catalog>
-                    </catalogs>
                     <outputDirectory>${project.build.directory}/generated-sources/xsd/</outputDirectory>
                     <xjbSources>
                         <xjbSource>src/main/resources/xjb/global.xjb</xjbSource>
@@ -98,6 +95,7 @@
                         <configuration>
                             <packageName>hu.gov.online.invoice.xml.v3</packageName>
                             <outputDirectory>${project.build.directory}/generated-sources/xsd</outputDirectory>
+                            <catalog>src/main/resources/xsd/osa_schemas_v3/catalog.xml</catalog>
                             <sources>
                                 <source>src/main/resources/xsd/osa_schemas_v3/common.xsd</source>
                                 <source>src/main/resources/xsd/osa_schemas_v3/invoiceBase.xsd</source>

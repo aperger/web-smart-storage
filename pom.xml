@@ -5,6 +5,13 @@
                              http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>4.0.2</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+
     <groupId>hu.ps.ss</groupId>
     <artifactId>web-smart-storage</artifactId>
     <version>0.0.1-SNAPSHOT</version>
@@ -18,29 +25,32 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <maven-compiler-version>3.14.1</maven-compiler-version>
-        <maven-surefire-version>3.5.4</maven-surefire-version>
-        <maven-failsafe-version>3.5.4</maven-failsafe-version>
+        <maven.compiler.version>3.14.1</maven.compiler.version>
+        <maven.jar.plugin.version>3.4.2</maven.jar.plugin.version>
+        <maven.surefire.version>3.5.4</maven.surefire.version>
+        <maven.failsafe.version>3.5.4</maven.failsafe.version>
 
         <spring-boot.version>4.0.2</spring-boot.version>
+        <!-- temporary solution to avoid vulnerability inside Spring dependencies -->
+        <assertj.version>3.27.7</assertj.version>
+        <jetty.version>12.1.6</jetty.version>
+
         <lombok.version>1.18.42</lombok.version>
-        <postgresql.version>42.7.7</postgresql.version>
+        <mapstruct.version>1.6.3</mapstruct.version>
+
+        <postgresql.version>42.7.9</postgresql.version>
+        <h2.version>2.4.240</h2.version>
         <jackson-annotations.version>3.0-rc5</jackson-annotations.version>
 
         <jakarta-xml-bind.version>4.0.4</jakarta-xml-bind.version>
         <jaxb-core.version>4.0.6</jaxb-core.version>
         <jaxb-impl.version>4.0.6</jaxb-impl.version>
+        <jacoco.plugin.version>0.8.13</jacoco.plugin.version>
     </properties>
 
-    <!-- parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.0.2</version>
-        <relativePath/> <!- - lookup parent from repository - ->
-    </parent -->
     <dependencyManagement>
         <dependencies>
-            <!-- Spring Boot BOM -->
+            <!-- Spring Boot BOM
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
@@ -48,13 +58,41 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            -->
+
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>${lombok.version}</version>
-                <optional>true</optional>
-                <scope>compile</scope>
             </dependency>
+
+            <dependency>
+                <groupId>org.mapstruct</groupId>
+                <artifactId>mapstruct-processor</artifactId>
+                <version>${mapstruct.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.h2database</groupId>
+                <artifactId>h2</artifactId>
+                <version>${h2.version}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.postgresql</groupId>
+                <artifactId>postgresql</artifactId>
+                <version>${postgresql.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-data-jpa-test</artifactId>
+                <scope>test</scope>
+                <version>${spring-boot.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
@@ -69,7 +107,7 @@
     <dependencies>
     </dependencies>
 
-    <build>
+    <!--build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -85,6 +123,11 @@
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
                         </path>
+                        <path>
+                            <groupId>org.mapstruct</groupId>
+                            <artifactId>mapstruct-processor</artifactId>
+                            <version>${mapstruct.version}</version>
+                        </path>
                     </annotationProcessorPaths>
                 </configuration>
             </plugin>
@@ -98,17 +141,21 @@
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
                         </exclude>
+                        <exclude>
+                            <groupId>org.mapstruct</groupId>
+                            <artifactId>mapstruct-processor</artifactId>
+                        </exclude>
                     </excludes>
                 </configuration>
             </plugin>
 
-            <!-- Surefire Plugin is designed to run unit tests -->
+            <!- - Surefire Plugin is designed to run unit tests - ->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven-surefire-version}</version>
             </plugin>
-            <!-- Failsafe Plugin is designed to run integration tests -->
+            <!- - Failsafe Plugin is designed to run integration tests - ->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
@@ -122,6 +169,123 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
+    -->
+
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven.compiler.version}</version>
+                    <configuration>
+                        <source>${maven.compiler.source}</source>
+                        <target>${maven.compiler.source}</target>
+                        <!--
+                        The error:
+                        Spring: Cannot resolve parameter names for constructor
+                        Java "Ensure that the compiler uses the '-parameters' flag.'"
+
+                        teh solution:
+                        https://github.com/spring-projects/spring-framework/issues/31675
+
+                        Since -parameters is required for certain use cases starting with Spring Framework 6.1,
+                        we should revise related exception messages to explicitly mention the solution.
+                        -->
+                        <compilerArgument>
+                            -parameters
+                        </compilerArgument>
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                                <version>${lombok.version}</version>
+                            </path>
+                            <path>
+                                <groupId>org.mapstruct</groupId>
+                                <artifactId>mapstruct-processor</artifactId>
+                                <version>${mapstruct.version}</version>
+                            </path>
+                        </annotationProcessorPaths>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>${maven.jar.plugin.version}</version>
+                    <configuration>
+                        <archive>
+                            <manifest>
+                                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            </manifest>
+                            <manifestEntries>
+                                <Release-Version>${project.version}</Release-Version>
+                                <Source-Jdk-Version>${maven.compiler.source}</Source-Jdk-Version>
+                                <Target-Jdk-Version>${maven.compiler.target}</Target-Jdk-Version>
+                                <Build-Date>${maven.build.timestamp}</Build-Date>
+                            </manifestEntries>
+                        </archive>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven.surefire.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>${maven.surefire.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>${jacoco.plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>prepare-agent</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>report</id>
+                            <phase>prepare-package</phase>
+                            <goals>
+                                <goal>report</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <!--plugin>
+                    <groupId>org.sonarsource.scanner.maven</groupId>
+                    <artifactId>sonar-maven-plugin</artifactId>
+                    <version>3.8.0.2131</version>
+                </plugin-->
+            </plugins>
+        </pluginManagement>
+    </build>
+
 </project>

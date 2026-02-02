@@ -16,11 +16,18 @@
     <description>Infrastructure adapter layer - external service integrations</description>
 
     <dependencies>
+        <!-- Domain and Data Modules -->
         <dependency>
             <groupId>hu.ps.ss</groupId>
             <artifactId>domain</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
+        <dependency>
+            <groupId>hu.ps.ss</groupId>
+            <artifactId>data</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+
         <!-- Spring WebClient for HTTP calls -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

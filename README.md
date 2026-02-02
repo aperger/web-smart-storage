@@ -25,7 +25,7 @@ This project is organized as a Gradle multi-module project with the following mo
 - **Purpose**: Application layer (REST API, use cases, main application entry point)
 - **This is the only bootable module**
 - **Dependencies**: All other modules (domain, data, infra), Spring Boot starters
-- **Entry Point**: `hu.ps.ss.apiservice.WebSmartStorageApplication`
+- **Entry Point**: `hu.ps.ss.apiservice.ApiServiceApplication`
 
 ## Building the Project
 
