@@ -170,7 +170,7 @@ public class DocumentHeader extends EntityBase {
     //bi-directional many-to-one association to Tpartnerek
     @ManyToOne
     @JoinColumn(name="FVEVOAZONOSITO", nullable = true)
-    private Partner partner;
+    private PartnerEntity partner;
 
     @Column(name="FVEVONEV")
     private String customerName;

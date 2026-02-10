@@ -34,13 +34,14 @@
         <!-- temporary solution to avoid vulnerability inside Spring dependencies -->
         <assertj.version>3.27.7</assertj.version>
         <jetty.version>12.1.6</jetty.version>
+        <jackson-2-bom.version>2.21.0</jackson-2-bom.version>
 
         <lombok.version>1.18.42</lombok.version>
         <mapstruct.version>1.6.3</mapstruct.version>
+        <springdoc.openapi.starter.version>3.0.1</springdoc.openapi.starter.version>
 
         <postgresql.version>42.7.9</postgresql.version>
         <h2.version>2.4.240</h2.version>
-        <jackson-annotations.version>3.0-rc5</jackson-annotations.version>
 
         <jakarta-xml-bind.version>4.0.4</jakarta-xml-bind.version>
         <jaxb-core.version>4.0.6</jaxb-core.version>
@@ -58,12 +59,28 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+
+            <dependency>
+                <groupId>com.fasterxml.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <!- - same property is defined by Spring Boot BOM,
+                maybe we need to override it to avoid vulnerable versions - ->
+                <version>${jackson-2-bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             -->
 
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>${lombok.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.mapstruct</groupId>
+                <artifactId>mapstruct</artifactId>
+                <version>${mapstruct.version}</version>
             </dependency>
 
             <dependency>

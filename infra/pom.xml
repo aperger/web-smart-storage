@@ -27,7 +27,17 @@
             <artifactId>data</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
+        <dependency>
+            <groupId>hu.ps.ss</groupId>
+            <artifactId>online-invoice-xml</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
 
+        <!-- Spring Data JPA for database access -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
         <!-- Spring WebClient for HTTP calls -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -38,6 +48,22 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webflux</artifactId>
         </dependency>
+
+        <!-- Annotations -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct-processor</artifactId>
+        </dependency>
+
+
         <!-- Testing with WebClient -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

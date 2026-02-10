@@ -45,10 +45,10 @@ public class DocumentItem extends EntityBase {
     @Column(name="FEGYSEGAR")
     private BigDecimal unitPrice;
 
-    //bi-directional many-to-one association to VatKey
+    //bi-directional many-to-one association to VatKeyEntity
     @ManyToOne
     @JoinColumn(name="FAFAAZON", nullable = true)
-    private VatKey vatKey;
+    private VatKeyEntity vatKey;
 
     @Column(name="FAFA", precision = 12, scale = 2)
     private BigDecimal vatValue;

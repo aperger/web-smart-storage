@@ -23,7 +23,6 @@
         </dependencies>
     </dependencyManagement>
 
-    <groupId>hu.ps.ss.onlineinvoice.xml</groupId>
     <artifactId>online-invoice-xml</artifactId>
     <name>Online Invoice XML Module</name>
     <description>JAXB-generated classes for Online Invoice XML handling</description>
