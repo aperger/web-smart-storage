@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/SmartStorageDev?currentSchema=public&serverVersion=16&charset=utf8
+    username: aperger
+    password: ~
+    
+  jpa:
+    hibernate:
+      ddl-auto: validate
+
+debug: true
+

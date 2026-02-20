@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    driverClassName: org.sqlite.JDBC
+    url: jdbc:sqlite:/Users/aperger/.smartstorage/smartstorage.sqlite
+    platform: sqlite
+    
+  jpa:
+    database: default # auto detect dialects with this
+    generate-ddl: false
+    show-sql: false
+    #database-platform:  org.sqlite.hibernate.dialect.SQLiteDialect
+    database-platform: ps.ss.config.CustomSQLiteDialect
+        
+    hibernate:
+      naming:
+        # Can be configure as @Bean -> @Bean public PhysicalNamingStrategy physical() { return new QuotedNamingStrategy(); }
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl

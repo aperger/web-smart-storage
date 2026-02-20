@@ -1,0 +1,12 @@
+spring:
+  datasource:
+    driverClassName: org.sqlite.JDBC
+    url: jdbc:sqlite:/Users/aperger/.smartstorage/pergersoft-prod.sqlite
+    platform: sqlite
+    
+  jpa:
+    hibernate:
+      ddl-auto: none
+
+debug: false
+

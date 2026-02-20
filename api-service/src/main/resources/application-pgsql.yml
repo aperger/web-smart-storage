@@ -1,0 +1,20 @@
+spring:
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/SmartStorage?currentSchema=public&serverVersion=16&charset=utf8
+    username: postgres
+    password: secret
+    platform: postgresql
+    
+  jpa:
+    database: default # auto detect dialects with this
+    generate-ddl: false
+    show-sql: false
+    database-platform: ps.ss.config.CustomPostgreSQLDialect
+    #database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+        
+    hibernate:
+      naming:
+        # Can be configure as @Bean -> @Bean public PhysicalNamingStrategy physical() { return new QuotedNamingStrategy(); }
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl

@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/SmartStorage
+    username: root
+    password: secret
+    platform: MYSQL
+    
+  jpa:
+    database: default # auto detect dialects with this
+    generate-ddl: false
+    show-sql: false
+    database-platform: org.hibernate.dialect.MySQLDialect
+    #database-platform: org.hibernate.dialect.MariaDBDialect
+        
+    hibernate:
+      naming:
+        # Can be configure as @Bean -> @Bean public PhysicalNamingStrategy physical() { return new QuotedNamingStrategy(); }
+        physical-strategy: ps.ss.config.MySqlUpperCaseNamingStrategy
