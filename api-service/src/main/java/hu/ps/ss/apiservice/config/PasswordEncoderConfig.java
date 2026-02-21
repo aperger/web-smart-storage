@@ -1,4 +1,4 @@
-package hu.ps.ss.config;
+package hu.ps.ss.apiservice.config;
 /*
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

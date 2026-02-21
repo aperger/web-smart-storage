@@ -1,4 +1,4 @@
-package hu.ps.ss.config;
+package hu.ps.ss.apiservice.config;
 
 import org.hibernate.boot.model.TypeContributions;
 import org.hibernate.dialect.PostgreSQLDialect;
