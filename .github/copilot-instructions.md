@@ -2,525 +2,162 @@
 
 ## Project Overview
 
-Web Smart Storage is a multi-module Spring Boot application designed following **hexagonal architecture** (ports and adapters) principles. The project emphasizes clean separation of concerns, framework independence in the core domain, and maintainability through clear module boundaries.
+Web Smart Storage is the Spring Boot backend of a full port of **QtSmartStorage** (a mature
+C++/Qt desktop invoicing & stock-management application) plus its Hungarian **NAV Online
+Invoice** integration. The backend is a multi-module **Maven** project built with strict
+**hexagonal architecture** (ports and adapters). A separate Angular + Ionic PWA frontend
+(not part of this repo yet) will consume the REST API.
 
-### Key Characteristics
-- **Architecture Pattern**: Hexagonal Architecture (Ports and Adapters)
-- **Project Type**: Multi-module Gradle project
-- **Primary Language**: Java 25
-- **Framework**: Spring Boot 4.0.2
-- **Build Tool**: Gradle 8.14
-- **Development Database**: H2 (in-memory)
+- **Build Tool**: Maven (root `pom.xml`, `packaging=pom`), **not Gradle**
+- **Language**: Java 25 · **Framework**: Spring Boot 4.0.3
+- **Persistence**: PostgreSQL, MySQL and SQLite must all be supported (see
+  `api-service/src/main/resources/application-{pgsql,mysql,sqlite}.yml` and the dialect/naming
+  classes under `api-service/.../config`). SQLite/legacy schemas can have "sticky" quirky column
+  names (see `@Column(name=...)` in entities) — never rename DB columns casually.
+- **Mapping**: MapStruct · **Boilerplate**: Lombok · **Docs**: springdoc-openapi
 
-## Module Structure and Responsibilities
+## Module Structure (dependency direction is inward, toward `domain`)
 
-The project is divided into four distinct modules, each with specific responsibilities:
-
-### 1. `domain/` - Core Domain Layer
-**Purpose**: Pure business logic and domain entities
-
-**Key Principles**:
-- **Framework-Independent**: Contains ZERO Spring dependencies
-- **Business Logic Only**: Pure Java domain models, value objects, and business rules
-- **Minimal Dependencies**: Only uses Lombok for reducing boilerplate
-- **No Side Effects**: Domain objects should not perform I/O operations
-
-**Package Structure**:
 ```
-hu.ps.ss.domain/
-  ├── model/        # Domain entities and value objects
-  ├── service/      # Domain services (business logic)
-  └── exception/    # Domain-specific exceptions
+online-invoice-xml → domain → data → infra → api-service
+                        ↑        (data, infra both depend only on domain)
 ```
 
-**What to put here**:
-- Business entities and aggregates
-- Value objects
-- Domain services with pure business logic
-- Domain events
-- Business rules and validations
+1. **`domain/`** — pure Java, **zero Spring dependencies**. Only Lombok.
+   - `hu.ps.ss.domain.<Xxx>Model` — domain models (e.g. `CountryModel`), usually extend
+     `hu.ps.ss.domain.pojo.ItemWithIdEditable` (id + `modified`/`modifiedBy`) or the lighter
+     `ItemWithId` / `ItemEditable`.
+   - `hu.ps.ss.domain.pojo` — shared value types: `ItemWithId`, `ItemEditable`,
+     `ItemWithIdEditable`, `PageResult<T>` (record: `items`, `pageDetails`), `PageDetails` (record).
+   - `hu.ps.ss.domain.ports.basic` — CRUD ports for simple reference/master data, all extend
+     `BaseModelPort<M, I>` (`findAll`, `findById`, `search(...)` paginated/list, `save`,
+     `deleteById`, `delete`). One-liner port per entity, e.g.
+     `interface VatKeyEditorPort extends BaseModelPort<VatKeyModel, Integer> {}`.
+   - `hu.ps.ss.domain.ports.document` — ports for the invoicing/document domain and external
+     integrations (`DocumentEditorPort`, `OnlineInvoiceApiPort`). These are richer than simple CRUD.
+2. **`data/`** — JPA entities + MapStruct mapper contracts (framework-light: JPA + Lombok +
+   MapStruct only, no repositories/services here).
+   - `hu.ps.ss.data.entity` — `@Entity` classes, mostly extending `EntityBase` (→ `IdentifierBase`)
+     which carries `modified`/`modifiedBy`. Table/column names mirror the legacy QtSmartStorage
+     schema (e.g. `TORSZAGOK`/`FKOD`/`FNEV`) — keep them unless a migration is explicitly planned.
+   - `hu.ps.ss.data.mappers` — the **mandatory mapper base hierarchy** (use everywhere, no
+     exceptions):
+     - `ObjectMapperOneWay<S, D>` — `D map(S)`, `List<D> mapList(List<S>)`
+     - `ObjectMapperBase<S, D>` extends OneWay — adds `S parseFrom(D)` (read-back direction)
+     - `ObjectMapper<S, D>` extends Base — adds `updateSource`/`updateDest` (in-place updates)
+     - `CommonMapperConfig` — the shared `@MapperConfig` (Spring component model, constructor
+       injection, `ERROR` on unmapped targets, adder-preferred collections). **Every**
+       `@Mapper` interface in `data` and `infra`/`api-service` must set `config = CommonMapperConfig.class`.
+3. **`infra/`** — the adapter/implementation layer for **all** ports (both persistence and
+   external integrations). Depends on `domain` + `data`.
+   - `hu.ps.ss.infra.database.repository` — Spring Data JPA repos extending
+     `BaseRepository<T, ID>` (`JpaRepository` + `JpaSpecificationExecutor`).
+   - `hu.ps.ss.infra.database.mapper` — `@Mapper(config = CommonMapperConfig.class)` interfaces
+     extending `ObjectMapperBase<Entity, Model>` (entity ↔ domain model).
+   - `hu.ps.ss.infra.database.service` — `AbstractEntityService<E, M, ID>` generic CRUD/search
+     engine (pagination, sorting, `Specification`-based filtering); one thin subclass per entity
+     implementing `getEntityClass()` and `createSearchSpecification(...)`.
+   - `hu.ps.ss.infra.database` (adapters) — `AbstractModelAdapter<E, M, I>` implements
+     `BaseModelPort<M, I>` generically by delegating to the entity service; one thin
+     `@Service class XxxEditorAdapter extends AbstractModelAdapter<...> implements XxxEditorPort`
+     per entity — **do not re-implement CRUD logic in the adapter**.
+   - `hu.ps.ss.infra.onlineinvoice` — NAV Online Invoice v3 adapters implementing
+     `OnlineInvoiceApiPort`, built on the JAXB classes generated in `online-invoice-xml`.
+4. **`api-service/`** — **the only bootable module** (`ApiServiceApplication`,
+   `@SpringBootApplication`). Depends on `domain`, `data`, `infra`.
+   - `hu.ps.ss.apiservice.dto` — API DTOs, extend the same `ItemWithId(Editable)` base classes
+     as domain models, annotated with `@Value`/`@Schema` (springdoc). Suffix: `...Dto`.
+   - `hu.ps.ss.apiservice.mapper` — `@Mapper(config = CommonMapperConfig.class)` interfaces
+     extending `ObjectMapperBase<Model, Dto>` (domain model ↔ DTO).
+   - `hu.ps.ss.apiservice.controller` — `AbstractModelController<M, D, S extends
+     BaseModelPort<M, Integer>>` provides generic `search`, `getItemById`, `createItem`,
+     `deleteById`. One thin `@RestController class XxxEditorController extends
+     AbstractModelController<...>` per entity that just adds `@RequestMapping`, OpenAPI
+     annotations (`@Tag`, `@Operation`, `@ApiResponses`) and delegates to `super`.
+   - `hu.ps.ss.apiservice.config` — per-DB dialect/naming strategy classes
+     (`CustomPostgreSQLDialect`, `CustomSQLiteDialect`, `MySqlUpperCaseNamingStrategy`,
+     `QuotedNamingStrategyMySql`) and shared config (`ObjectMapperConfiguration`,
+     `PasswordEncoderConfig`).
+5. **`online-invoice-xml/`** — JAXB-generated classes (from the official NAV `osa_schemas_v3`
+   XSDs under `src/main/resources/xsd`) plus custom date adapters. Framework-independent; used
+   by `infra.onlineinvoice` to build/parse NAV requests and responses. **Never hand-edit
+   generated JAXB sources** — regenerate from the XSDs/`global.xjb` binding instead.
 
-**What NOT to put here**:
-- Spring annotations (@Component, @Service, etc.)
-- Database entities (@Entity)
-- HTTP/REST concerns
-- Infrastructure dependencies
+## The canonical vertical slice (reference entity: `Country`)
 
-### 2. `data/` - Persistence Adapter Layer
-**Purpose**: Database access and JPA entities
+`CountryEntity` (data) → `CountryMapper` (infra, entity↔model) → `CountryRepository` (infra) →
+`CountryEntityService` (infra) → `CountryEditorAdapter` (infra) implements `CountryEditorPort`
+(domain) ← `CountryEditorMapper` (api-service, model↔dto) ← `CountryDto` (api-service) ←
+`CountryEditorController` (api-service). Copy this pattern exactly for every new simple
+reference entity; only diverge for aggregates that need custom ports (`ports.document`).
 
-**Key Principles**:
-- Implements persistence ports defined in domain
-- Contains JPA entities that map to database tables
-- Uses Spring Data JPA repositories
-- Translates between domain models and JPA entities
+## Multi-database support rules
 
-**Dependencies**: `domain`, `spring-boot-starter-data-jpa`
+- Never assume one dialect. Validate new JPA mappings/queries against `application-dev-pgsql.yml`,
+  `application-dev-mysql.yml` and `application-dev-sqlite.yml` profiles.
+- Respect existing (sometimes legacy/"sticky") column and table names via `@Column`/`@Table`;
+  do not normalize them unless asked.
+- SQLite has limited type/constraint support — avoid DB-specific SQL/JPQL features that don't
+  degrade gracefully across all three engines; prefer `Specification`-based filtering (already
+  used by `AbstractEntityService`) over native queries when possible.
 
-**Package Structure**:
-```
-hu.ps.ss.data/
-  ├── entity/       # JPA entities (@Entity)
-  ├── repository/   # Spring Data JPA repositories
-  └── mapper/       # Mappers between domain and JPA entities
-```
-
-**What to put here**:
-- JPA entities with @Entity, @Table, etc.
-- Spring Data repositories (interfaces extending JpaRepository)
-- Database-specific configurations
-- Entity mappers (domain ↔ JPA entity)
-
-### 3. `infra/` - Infrastructure Adapter Layer
-**Purpose**: External service integrations and technical infrastructure
-
-**Key Principles**:
-- Implements infrastructure ports defined in domain
-- Handles external HTTP calls, message queues, etc.
-- Uses Spring WebClient and WebFlux for async operations
-- No business logic - only technical concerns
-
-**Dependencies**: `domain`, `spring-boot-starter-webclient`, `spring-boot-starter-webflux`
-
-**Package Structure**:
-```
-hu.ps.ss.infra/
-  ├── client/       # HTTP clients for external services
-  ├── adapter/      # Port implementations
-  └── config/       # Infrastructure configurations
-```
-
-**What to put here**:
-- WebClient configurations and clients
-- External API integrations
-- Message queue adapters
-- File system adapters
-- Caching implementations
-
-### 4. `api-service/` - Application and Presentation Layer
-**Purpose**: REST API, application orchestration, and main entry point
-
-**Key Principles**:
-- **ONLY BOOTABLE MODULE**: Contains @SpringBootApplication
-- Orchestrates use cases using domain and adapters
-- Exposes REST APIs
-- Handles HTTP concerns (request/response mapping, validation)
-- Component scanning includes: `hu.ps.ss.apiservice`, `hu.ps.ss.data`, `hu.ps.ss.infra`
-
-**Dependencies**: `domain`, `data`, `infra`, `spring-boot-starter-web`
-
-**Package Structure**:
-```
-hu.ps.ss.apiservice/
-  ├── WebSmartStorageApplication.java  # Main entry point
-  ├── controller/   # REST controllers
-  ├── dto/          # Data Transfer Objects (request/response)
-  ├── usecase/      # Application use cases (orchestration)
-  ├── mapper/       # DTO ↔ Domain mappers
-  └── config/       # Application-level configuration
-```
-
-**What to put here**:
-- REST controllers (@RestController)
-- Request/Response DTOs
-- Application services (@Service) that orchestrate use cases
-- Exception handlers (@ControllerAdvice)
-- Security configurations
-- API documentation (Swagger/OpenAPI)
-
-## Architecture Principles
-
-### Dependency Flow
-```
-┌─────────────┐
-│   domain    │ ← Core (no dependencies on other layers)
-└──────┬──────┘
-       │
-┌──────┴──────┬──────────────┐
-│             │              │
-┌───▼────┐   ┌───▼────┐    ┌───▼────┐
-│  data  │   │ infra  │    │  ...   │ ← Adapters depend on domain
-└───┬────┘   └───┬────┘    └────────┘
-    │            │
-    └────┬───────┘
-         │
-    ┌────▼─────────┐
-    │ api-service  │ ← Application layer depends on all
-    └──────────────┘
-```
-
-### Key Rules
-1. **Domain is King**: All business logic lives in the domain module
-2. **Dependency Direction**: Always point inward toward domain, never outward
-3. **Port-Adapter Pattern**: Use interfaces (ports) in domain, implementations (adapters) in infra/data
-4. **Single Responsibility**: Each module has ONE clear responsibility
-5. **Framework Independence**: Domain layer has ZERO framework dependencies
-
-## Development Guidelines
-
-### Adding New Features
-
-#### 1. Domain-First Approach
-Always start with the domain:
-```java
-// 1. Define domain model in domain/model/
-public class StorageItem {
-    private String id;
-    private String name;
-    // ... business logic methods
-}
-
-// 2. Define domain service interface (port)
-public interface StorageRepository {
-    StorageItem save(StorageItem item);
-    Optional<StorageItem> findById(String id);
-}
-```
-
-#### 2. Implement Adapters
-```java
-// data/ - JPA implementation
-@Repository
-public class JpaStorageRepository implements StorageRepository {
-    // Implementation using Spring Data JPA
-}
-
-// infra/ - External service implementation
-@Component
-public class ExternalStorageClient implements ExternalStoragePort {
-    // Implementation using WebClient
-}
-```
-
-#### 3. Expose via API
-```java
-// api-service/controller/
-@RestController
-@RequestMapping("/api/storage")
-public class StorageController {
-    private final StorageService storageService;
-    // REST endpoints
-}
-```
-
-### Code Organization Best Practices
-
-1. **Package by Feature, Not Layer**: Within each module, organize by feature
-   ```
-   domain/
-     └── storage/
-         ├── StorageItem.java
-         ├── StorageRepository.java
-         └── StorageService.java
-   ```
-
-2. **Use Meaningful Names**: 
-   - Entities: Nouns (StorageItem, User)
-   - Services: Verb + Noun (StorageService, UserManager)
-   - Repositories: Noun + Repository (StorageRepository)
-
-3. **Keep Classes Small**: Aim for single responsibility
-   - Controllers: HTTP concerns only
-   - Services: Orchestration only
-   - Repositories: Data access only
-
-4. **Use DTOs in API Layer**: Never expose domain entities directly via REST
-   ```java
-   // api-service/dto/
-   public record StorageItemRequest(String name, String content) {}
-   public record StorageItemResponse(String id, String name) {}
-   ```
-
-### Testing Strategy
-
-#### Unit Tests
-- **domain/**: Test business logic in isolation (no Spring context)
-- **data/**: Use @DataJpaTest for repository tests
-- **infra/**: Mock external services
-- **api-service/**: Use @WebMvcTest for controller tests
-
-#### Integration Tests
-- Place in `api-service/src/test/`
-- Use @SpringBootTest for end-to-end tests
-- Use H2 in-memory database for testing
-
-### Common Gradle Commands
+## Common Maven commands
 
 ```bash
-# Build entire project
-./gradlew build
-
-# Build specific module
-./gradlew :domain:build
-./gradlew :data:build
-./gradlew :infra:build
-./gradlew :api-service:build
-
-# Run application
-./gradlew :api-service:bootRun
-
-# Run tests
-./gradlew test                    # All tests
-./gradlew :domain:test           # Module-specific tests
-
-# Clean and rebuild
-./gradlew clean build
-
-# View project structure
-./gradlew projects
-
-# View dependencies
-./gradlew :api-service:dependencies
+./mvnw -q -pl domain,data,infra,api-service -am compile   # compile all modules
+./mvnw -q -pl domain test                                  # module-specific tests
+./mvnw -q test                                              # full test suite
+./mvnw -q -pl api-service spring-boot:run                   # run the app (H2 by default)
+./mvnw -q -pl api-service spring-boot:run -Dspring-boot.run.profiles=dev-sqlite
 ```
 
-## Configuration Management
+## Using AI agents for this port
 
-### Application Properties
-Located in `api-service/src/main/resources/application.properties`
+This repository follows the same Copilot methodology as other projects by this maintainer:
+project-wide instructions (this file) → a **skill** describing the phased workflow → focused
+**custom agents**, one per hexagonal layer, each with a narrow job and a code template.
 
-**Current Configuration**:
-- Application name: `web-smart-storage`
-- Server port: 8080 (default)
-- Database: H2 in-memory (auto-configured)
+- Skill: `entity-vertical-slice` (`.github/skills/entity-vertical-slice/SKILL.md`) — the
+  step-by-step workflow for porting one QtSmartStorage feature end-to-end.
+- Agents (`.github/agents/`):
+  - `@domain-model-agent` — domain models, pojos, ports
+  - `@persistence-adapter-agent` — `data` entities/mappers + `infra` repository/service/adapter
+  - `@api-layer-agent` — DTOs, api-service mappers, controllers
+  - `@nav-online-invoice-agent` — NAV Online Invoice XML/token/signing integration
+  - `@vertical-slice-kickoff` — coordinator that sequences the above agents per feature/entity
 
-### Environment-Specific Configuration
-Use Spring profiles for different environments:
-```properties
-# application.properties (default)
-spring.application.name=web-smart-storage
+Always start new feature work with the skill, then delegate layer-by-layer with the matching
+agent. Keep each agent invocation scoped to one layer and one entity/feature at a time.
 
-# application-dev.properties
-spring.h2.console.enabled=true
+## Coding standards
 
-# application-prod.properties
-spring.datasource.url=jdbc:postgresql://...
-```
+- Use Lombok consistently: `@Data`/`@Value` + `@Builder` + `@NoArgsConstructor`/
+  `@AllArgsConstructor`; add `@EqualsAndHashCode(callSuper = true)`/`@ToString(callSuper = true)`
+  whenever extending a base class with fields.
+- Use MapStruct (`data.mappers` hierarchy) for **every** object mapping — never hand-write
+  entity↔model↔dto conversions.
+- Prefer `Optional` for nullable single-item returns; use `var` when the type is obvious.
+- Never expose JPA entities or domain models directly via REST — always go through a DTO.
+- Business rules belong in `domain`; controllers/adapters/services stay thin and delegate.
 
-## Common Tasks and Patterns
+## Testing strategy
 
-### Adding a New REST Endpoint
+- `domain/`: plain JUnit 5, no Spring context.
+- `data/`+`infra/`: `@DataJpaTest`/`@SpringBootTest` against H2 first, then re-validate against
+  the pgsql/mysql/sqlite profiles for anything dialect-sensitive.
+- `api-service/`: `@WebMvcTest` for controllers, `@SpringBootTest` for end-to-end flows.
+- NAV integration: mock the SOAP/REST/XML boundary; never hit the real NAV endpoints from tests.
 
-1. **Create DTO** (api-service/dto/):
-   ```java
-   public record CreateItemRequest(String name, String content) {}
-   ```
+## Project maturity and next steps
 
-2. **Add Domain Logic** (domain/):
-   ```java
-   public class StorageItem {
-       public static StorageItem create(String name, String content) {
-           // Business validation and creation logic
-       }
-   }
-   ```
+**Done**: multi-module skeleton, mapper/port/adapter/controller base classes, `Country` fully
+wired end-to-end, several entities partially wired (`VatKey` has data/infra but no api-service
+layer yet; `Currency`, `ItemGroup`, `ItemType`, `PaymentMethod`, `Partner`, `MasterItem` have
+domain ports/models only).
 
-3. **Add Controller Endpoint** (api-service/controller/):
-   ```java
-   @PostMapping
-   public ResponseEntity<ItemResponse> createItem(@RequestBody CreateItemRequest request) {
-       // Orchestrate use case
-   }
-   ```
-
-### Adding a New Database Entity
-
-1. **Domain Model First** (domain/):
-   ```java
-   public class StorageItem {
-       private String id;
-       private String name;
-       // Domain logic
-   }
-   ```
-
-2. **JPA Entity** (data/entity/):
-   ```java
-   @Entity
-   @Table(name = "storage_items")
-   public class StorageItemEntity {
-       @Id
-       private String id;
-       private String name;
-       // JPA mappings
-   }
-   ```
-
-3. **Repository** (data/repository/):
-   ```java
-   public interface StorageItemRepository extends JpaRepository<StorageItemEntity, String> {
-   }
-   ```
-
-4. **Mapper** (data/mapper/):
-   ```java
-   public class StorageItemMapper {
-       public static StorageItem toDomain(StorageItemEntity entity) { }
-       public static StorageItemEntity toEntity(StorageItem domain) { }
-   }
-   ```
-
-### Adding External Service Integration
-
-1. **Define Port in Domain** (domain/):
-   ```java
-   public interface ExternalStoragePort {
-       void uploadFile(String filename, byte[] content);
-   }
-   ```
-
-2. **Implement in Infra** (infra/client/):
-   ```java
-   @Component
-   public class ExternalStorageClient implements ExternalStoragePort {
-       private final WebClient webClient;
-       
-       @Override
-       public void uploadFile(String filename, byte[] content) {
-           // WebClient implementation
-       }
-   }
-   ```
-
-3. **Use in Application Layer** (api-service/):
-   ```java
-   @Service
-   public class FileUploadService {
-       private final ExternalStoragePort storagePort;
-       // Use the port
-   }
-   ```
-
-## Technology Stack Details
-
-### Core Dependencies
-- **Java 25**: Latest LTS version with modern language features
-- **Spring Boot 4.0.2**: Latest Spring Boot with enhanced performance
-- **Gradle 8.14**: Minimum version required for Spring Boot 4.0.2
-- **Lombok**: Reduces boilerplate (use @Data, @Builder, @Value)
-
-### Spring Boot Starters Used
-- `spring-boot-starter-web`: REST API support
-- `spring-boot-starter-data-jpa`: Database access
-- `spring-boot-starter-webclient`: HTTP client
-- `spring-boot-starter-webflux`: Reactive web support
-- `spring-boot-devtools`: Development-time features
-
-### Testing Dependencies
-- JUnit 5 (Jupiter): Unit testing
-- Spring Boot Test: Integration testing
-- H2 Database: In-memory testing database
-
-## Coding Standards
-
-### Java Style
-- Use Java records for immutable DTOs
-- Prefer composition over inheritance
-- Use Optional for nullable returns
-- Use var for local variables when type is obvious
-
-### Spring Annotations
-- `@RestController` for REST endpoints
-- `@Service` for business services
-- `@Repository` for data access (Spring Data auto-implements)
-- `@Component` for general Spring beans
-
-### Lombok Usage
-- `@Data` for mutable data classes
-- `@Value` for immutable classes
-- `@Builder` for complex object creation
-- `@RequiredArgsConstructor` for dependency injection
-
-### Exception Handling
-- Create domain-specific exceptions in `domain/exception/`
-- Handle exceptions globally in api-service using @ControllerAdvice
-- Use appropriate HTTP status codes in REST responses
-
-## Performance Considerations
-
-1. **Use WebClient for External Calls**: Non-blocking, reactive HTTP client
-2. **Database Connection Pooling**: HikariCP (auto-configured by Spring Boot)
-3. **Lazy Loading**: Be careful with JPA relationships
-4. **Caching**: Use Spring Cache abstraction when needed
-5. **Async Processing**: Use @Async for long-running operations
-
-## Security Best Practices
-
-1. **Input Validation**: Validate all inputs at API layer
-2. **Never Trust User Input**: Sanitize data before processing
-3. **Use DTOs**: Never expose domain entities directly
-4. **Dependency Scanning**: Keep dependencies up-to-date
-5. **Environment Variables**: Use for sensitive configuration
-
-## Troubleshooting
-
-### Common Issues
-
-**Port 8080 Already in Use**:
-```bash
-# Find and kill process using port 8080
-lsof -ti:8080 | xargs kill
-```
-
-**Gradle Daemon Issues**:
-```bash
-./gradlew --stop
-```
-
-**Clean Build**:
-```bash
-./gradlew clean build --refresh-dependencies
-```
-
-**H2 Console Access** (if enabled):
-- URL: http://localhost:8080/h2-console
-- JDBC URL: jdbc:h2:mem:testdb
-- Username: sa
-- Password: (empty)
-
-## References and Resources
-
-- [Spring Boot Documentation](https://docs.spring.io/spring-boot/docs/current/reference/html/)
-- [Hexagonal Architecture](https://alistair.cockburn.us/hexagonal-architecture/)
-- [Domain-Driven Design](https://martinfowler.com/tags/domain%20driven%20design.html)
-- [Gradle Documentation](https://docs.gradle.org/)
-
-## Quick Start for New Developers
-
-1. **Clone and Build**:
-   ```bash
-   git clone <repository-url>
-   cd web-smart-storage
-   ./gradlew build
-   ```
-
-2. **Run Application**:
-   ```bash
-   ./gradlew :api-service:bootRun
-   ```
-
-3. **Verify Application**:
-   ```bash
-   curl http://localhost:8080/
-   ```
-
-4. **Run Tests**:
-   ```bash
-   ./gradlew test
-   ```
-
-## Project Maturity and Future Work
-
-**Current State**: Foundation complete with multi-module structure
-**Next Steps**:
-- Add concrete domain models and business logic
-- Implement actual REST endpoints
-- Add comprehensive test coverage
-- Configure production database (PostgreSQL/MySQL)
-- Add API documentation (OpenAPI/Swagger)
-- Implement security (Spring Security)
-- Add observability (metrics, logging, tracing)
+**Next steps** (see the skill for the phased plan): finish simple reference entities end-to-end,
+then Partner/MasterItem aggregates, then the Document/invoice aggregate, then NAV Online Invoice
+submission using `online-invoice-xml`.
 
 ---
-
-**Last Updated**: 2026-02-01  
 **Maintainer**: GitHub Copilot Guidelines for aperger/web-smart-storage
