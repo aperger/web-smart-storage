@@ -114,6 +114,11 @@
                 <version>${spring-boot.version}</version>
                 <executions>
                     <execution>
+                        <goals>
+                            <goal>build-info</goal>
+                        </goals>
+                    </execution>
+                    <execution>
                         <id>standalone-jar</id>
                         <goals>
                             <goal>repackage</goal>
