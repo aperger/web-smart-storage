@@ -47,6 +47,9 @@ public class NAVOnlineInvoice implements Serializable {
 	@Column(name="FUSER")
 	private String user;
 
+	@Column(name="FELEKTRONIKUSSZAMLAHASH")
+	private String electronicInvoiceHash;
+
 	@Column(name="FUZENET")
 	private String message;
 
