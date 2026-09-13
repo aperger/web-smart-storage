@@ -112,6 +112,9 @@ public class PartnerEntity extends EntityBase {
 	@Column(name="FSZULDATUM")
 	private LocalDate birthDate;
 
+	@Column(name="FELEKTRONIKUSADATSZOLG")
+	private int electronicDataService;
+
 	//bi-directional many-to-one association to DocumentHeader
 	@OneToMany(mappedBy="partner", fetch = FetchType.LAZY)
 	private List<DocumentHeader> docHeaders;
