@@ -119,6 +119,9 @@ public class DocumentHeader extends EntityBase {
     @Column(name="FCEGBANKSZLA")
     private String companyBankAccount;
 
+    @Column(name="FCEGBANKNEV")
+    private String companyBankName;
+
     @Column(name="FCEGEMAIL")
     private String companyEmail;
 
@@ -228,6 +231,12 @@ public class DocumentHeader extends EntityBase {
 
     @Column(name="FVEVOEMAIL")
     private String customerEmail;
+
+    @Column(name="FVEVOSZERVEGYSEG")
+    private String customerOrgUnit;
+
+    @Column(name="FELEKTRONIKUSADATSZOLG")
+    private int electronicDataService;
 
     @Column(name="FSTR01")
     private String comment01;
