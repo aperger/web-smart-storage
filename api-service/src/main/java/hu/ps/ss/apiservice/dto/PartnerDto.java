@@ -78,4 +78,7 @@ public class PartnerDto extends ItemWithIdEditable {
   Character sex;
   @Schema(description = "Birth date.", example = "1990-01-01")
   LocalDate birthDate;
+
+  @Schema(description = "Electronic data service flag from the legacy partner record.", example = "1")
+  int electronicDataService;
 }
