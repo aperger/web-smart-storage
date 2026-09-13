@@ -9,7 +9,7 @@ Invoice** integration. The backend is a multi-module **Maven** project built wit
 (not part of this repo yet) will consume the REST API.
 
 - **Build Tool**: Maven (root `pom.xml`, `packaging=pom`), **not Gradle**
-- **Language**: Java 25 · **Framework**: Spring Boot 4.0.3
+- **Language**: Java 25 · **Framework**: Spring Boot 4.1.1
 - **Persistence**: PostgreSQL, MySQL and SQLite must all be supported (see
   `api-service/src/main/resources/application-{pgsql,mysql,sqlite}.yml` and the dialect/naming
   classes under `api-service/.../config`). SQLite/legacy schemas can have "sticky" quirky column
@@ -104,11 +104,11 @@ reference entity; only diverge for aggregates that need custom ports (`ports.doc
 ## Common Maven commands
 
 ```bash
-./mvnw -q -pl domain,data,infra,api-service -am compile   # compile all modules
-./mvnw -q -pl domain test                                  # module-specific tests
-./mvnw -q test                                              # full test suite
-./mvnw -q -pl api-service spring-boot:run                   # run the app (H2 by default)
-./mvnw -q -pl api-service spring-boot:run -Dspring-boot.run.profiles=dev-sqlite
+mvn -q -pl domain,data,infra,api-service -am compile   # compile all modules
+mvn -q -pl domain test                                  # module-specific tests
+mvn -q test                                              # full test suite
+mvn -q -pl api-service spring-boot:run                   # run the app (H2 by default)
+mvn -q -pl api-service spring-boot:run -Dspring-boot.run.profiles=dev-sqlite
 ```
 
 ## Using AI agents for this port
