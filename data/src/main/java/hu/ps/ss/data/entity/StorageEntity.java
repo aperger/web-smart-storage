@@ -11,10 +11,9 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-
 /**
- * The persistent class for the TVALUTAK database table.
- * 
+ * The persistent class for the TKOLTSEGHELYEK database table used for storage and cost centre
+ * records in the legacy application.
  */
 @Builder
 @NoArgsConstructor
@@ -22,15 +21,14 @@ import lombok.ToString;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
+@Table(name = "TKOLTSEGHELYEK")
 @Entity
-@Table(name="TVALUTAK")
-@NamedQuery(name="Currency.findAll", query="SELECT c FROM CurrencyEntity c ORDER BY c.code")
-public class CurrencyEntity extends EntityBase {
+@NamedQuery(name = "Storage.findAll", query = "SELECT s FROM StorageEntity s ORDER BY s.name")
+public class StorageEntity extends EntityBase {
 
-	@Column(name="FJEL")
-	private String symbol;
+  @Column(name = "FNEV")
+  private String name;
 
-	@Column(name="FKOD")
-	private String code;
-
+  @Column(name = "FTIPUS")
+  private int type;
 }

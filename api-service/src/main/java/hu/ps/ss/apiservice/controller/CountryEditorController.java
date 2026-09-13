@@ -36,7 +36,7 @@ import org.springframework.web.bind.annotation.RestController;
 )
 @SecurityRequirement(name = "bearerAuth")
 public class CountryEditorController extends
-    AbstractModelController<CountryModel, CountryDto, CountryEditorPort> {
+    AbstractModelController<CountryModel, CountryDto, Integer, CountryEditorPort> {
 
   public CountryEditorController(CountryEditorPort service, CountryEditorMapper mapper) {
     super(service, mapper);

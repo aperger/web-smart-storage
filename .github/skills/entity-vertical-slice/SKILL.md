@@ -32,15 +32,20 @@ new; every new simple reference entity must mirror this exactly.
 
 ### Phase 1 — Finish simple reference/master-data entities (read-mostly CRUD)
 Entities already partially wired (check current state before starting each):
-- `VatKey` — data/infra done (`VatKeyEditorAdapter`, `VatKeyEntityService`, `VatKeyRepository`,
-  `VatKeyMapper` exist); **api-service layer (dto/mapper/controller) is missing**.
-- `Currency`, `ItemGroup`, `ItemType`, `PaymentMethod` — domain port + model exist; some infra
-  mappers exist (`ItemGroupMapper`, `ItemTypeMapper`); repository/service/adapter and the full
-  api-service layer are missing for most.
+- `VatKey` — domain, data, infra, and api-service files already exist; verify behavior and keep
+  it as the first Phase 1 status check before new implementation work.
+- `Currency`, `ItemGroup`, `ItemType`, `PaymentMethod` — domain model/port and data entities
+  exist; some infra mappers exist (`ItemGroupMapper`, `ItemTypeMapper`); repository/service/
+  adapter and the full api-service layer are still missing for most.
+- `Storage` — present in the Qt desktop app's Basics menu, but still missing the Java domain/data/
+  infra/api-service slice in this repository.
 
 For each entity in this phase, use `@vertical-slice-kickoff` with the entity name; it will call
 `@persistence-adapter-agent` then `@api-layer-agent` (domain layer is usually already present —
-verify with `@domain-model-agent` first and only create what's missing).
+verify with `@domain-model-agent` first and only create what's missing). For the current
+Base-menu-first roadmap, use this order unless the user overrides it:
+`Country` (baseline only) → `VatKey` → `Currency` → `ItemGroup` → `ItemType` →
+`PaymentMethod` → `Storage`.
 
 ### Phase 2 — Partner and MasterItem aggregates
 `PartnerModel`/`MasterItemModel` are richer than plain reference data (relations to
@@ -84,6 +89,8 @@ Use `@nav-online-invoice-agent`. Builds on:
       @EqualsAndHashCode(callSuper=true)`)
 - [ ] `<Entity>EditorPort extends BaseModelPort<<Entity>Model, Integer> {}` (one-liner, unless a
       richer contract is required — see Phase 2/3)
+- [ ] For parent-child reference data, expose only the parent id in the child model/DTO (for
+      example `ItemType.itemGroupId`) instead of nesting persistence-layer objects.
 
 ### Data (`data/`)
 - [ ] `<Entity>Entity extends EntityBase` with `@Entity @Table(name=...)` mirroring the legacy
@@ -122,5 +129,5 @@ Use `@nav-online-invoice-agent`. Builds on:
 - **Never** put business logic in controllers, adapters, or repositories — only in `domain`.
 - **Never** rename legacy DB columns/tables without an explicit migration task.
 - Keep each phase small and verified (compile + tests green) before moving to the next entity.
-- Update this skill's "Phase 1" status list as entities get fully wired, so the next session
-  knows what's left.
+- Update this skill's Phase 1 status notes as entities get fully wired or verified, so the next
+  session knows what is still incomplete.

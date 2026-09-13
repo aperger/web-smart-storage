@@ -26,6 +26,8 @@ Report the gap (which layers exist vs. missing) before doing anything else.
 ## Orchestration Strategy
 
 1. **`@domain-model-agent`** (only if model/port missing) — model + port.
+   - For parent-child reference data, keep the child domain and API model flat by exposing the
+     parent id field (for example `ItemType.itemGroupId`) instead of nested persistence objects.
 2. **`@persistence-adapter-agent`** (only if data/infra missing) — JPA entity (if missing),
    entity↔model mapper, repository, entity service, port adapter.
 3. **`@api-layer-agent`** (only if api-service layer missing) — DTO, model↔dto mapper,
@@ -40,11 +42,11 @@ Report the gap (which layers exist vs. missing) before doing anything else.
 ## Validation Gates (run after each layer)
 
 ```bash
-./mvnw -q -pl domain compile                       # after domain-model-agent
-./mvnw -q -pl data,infra -am compile && \
-  ./mvnw -q -pl infra test                          # after persistence-adapter-agent
-./mvnw -q -pl api-service -am compile && \
-  ./mvnw -q -pl api-service test                    # after api-layer-agent
+mvn -q -pl domain compile                         # after domain-model-agent
+mvn -q -pl data,infra -am compile && \
+  mvn -q -pl infra test                            # after persistence-adapter-agent
+mvn -q -pl api-service -am compile && \
+  mvn -q -pl api-service test                      # after api-layer-agent
 ```
 
 ## Definition of Done (per entity)
@@ -53,7 +55,7 @@ Report the gap (which layers exist vs. missing) before doing anything else.
   variant, or the Phase 4 NAV variant, as applicable).
 - Every `@Mapper` uses `config = CommonMapperConfig.class` and extends the correct
   `ObjectMapper*` base interface.
-- `./mvnw -q -pl domain,data,infra,api-service -am test` passes.
+- `mvn -q -pl domain,data,infra,api-service -am test` passes.
 - No unrelated entity/module touched.
 - Update the "Phase 1 status" note in `.github/skills/entity-vertical-slice/SKILL.md` to reflect
   the entity now being fully wired.
@@ -61,5 +63,9 @@ Report the gap (which layers exist vs. missing) before doing anything else.
 ## Handoff Notes
 
 After one entity is done, repeat the same sequence for the next entity in the current phase.
+For the current Base-menu phase, prefer this order unless the user explicitly changes it:
+`Country` (baseline only) → `VatKey` (status check / finish if needed) → `Currency` →
+`ItemGroup` → `ItemType` → `PaymentMethod` → `Storage`, then defer `Partner`,
+`Special properties`, and `Items` as later aggregate work.
 Keep each entity independent, small, and test-verified before starting the next one. Do not
 batch multiple entities into a single specialist-agent invocation.

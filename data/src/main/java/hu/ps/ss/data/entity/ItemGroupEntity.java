@@ -1,10 +1,8 @@
 package hu.ps.ss.data.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import jakarta.persistence.*;
-import java.util.List;
 
 
 /**
@@ -30,9 +28,5 @@ public class ItemGroupEntity extends EntityBase {
 
 	@Column(name="FLEIRAS")
 	private String description;
-
-	@OneToMany(mappedBy = "itemGroup")
-	@JsonIgnore
-	private List<ItemTypeEntity> itemTypes;
 
 }

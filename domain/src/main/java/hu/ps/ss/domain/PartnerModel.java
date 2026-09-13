@@ -48,6 +48,6 @@ public class PartnerModel extends ItemWithIdEditable {
   private String lastName;
   private String firstName;
   private Character sex;
-    private LocalDate birthDate;
+  private LocalDate birthDate;
 
 }

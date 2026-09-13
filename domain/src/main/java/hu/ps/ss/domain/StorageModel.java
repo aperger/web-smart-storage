@@ -8,17 +8,14 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class ItemGroupModel extends ItemWithIdEditable {
+public class StorageModel extends ItemWithIdEditable {
 
   private String name;
-  private int function;
-  private String description;
-
+  private int type;
 }
