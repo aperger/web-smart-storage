@@ -1,5 +1,6 @@
 package hu.ps.ss.apiservice.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 import java.util.List;
 import lombok.EqualsAndHashCode;
@@ -9,6 +10,10 @@ import lombok.Value;
 @Value
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
+@Schema(
+    name = "MasterItem",
+    description = "Master item definition used for stock items and pricing data."
+)
 public class MasterItemDto extends ItemEditable {
 
   String stockCode;
