@@ -3,7 +3,7 @@
 ## Project Overview
 
 Web Smart Storage is the Spring Boot backend of a full port of **QtSmartStorage** (a mature
-C++/Qt desktop invoicing & stock-management application) plus its Hungarian **NAV Online
+C++/Qt desktop invoicing application) plus its Hungarian **NAV Online
 Invoice** integration. The backend is a multi-module **Maven** project built with strict
 **hexagonal architecture** (ports and adapters). A separate Angular + Ionic PWA frontend
 (not part of this repo yet) will consume the REST API.

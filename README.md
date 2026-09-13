@@ -1,6 +1,6 @@
 # Web Smart Storage
 
-**Web Smart Storage** is the web/API rebirth of [**Qt SmartStorage**](https://pergersoft.hu/) — a mature, battle-tested invoicing and stock-management application, now reborn as a modern, self-hosted Spring Boot backend with a REST API and a NAV Online Invoice integration built in from day one.
+**Web Smart Storage** is the web/API rebirth of [**Qt SmartStorage**](https://pergersoft.hu/) — a mature, battle-tested invoicing application, now reborn as a modern, self-hosted Spring Boot backend with a REST API and a NAV Online Invoice integration built in from day one.
 
 If you're looking for a Hungarian **NAV Online Invoice compatible** invoicing system that's easy to run yourself — on a NAS, a small server, or in the cloud — without vendor lock-in or a monthly subscription, this is for you.
 
