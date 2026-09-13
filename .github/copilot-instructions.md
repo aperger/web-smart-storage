@@ -159,5 +159,11 @@ domain ports/models only).
 then Partner/MasterItem aggregates, then the Document/invoice aggregate, then NAV Online Invoice
 submission using `online-invoice-xml`.
 
+## Git commit conventions
+
+- Do **not** add a `Co-authored-by: Copilot App ...` trailer to commit messages in this
+  repository. All commits should be authored solely as the user (via the locally configured
+  git identity), with no Copilot co-author trailer.
+
 ---
 **Maintainer**: GitHub Copilot Guidelines for aperger/web-smart-storage
