@@ -49,5 +49,6 @@ public class PartnerModel extends ItemWithIdEditable {
   private String firstName;
   private Character sex;
   private LocalDate birthDate;
+  private int electronicDataService;
 
 }
