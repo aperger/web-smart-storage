@@ -30,8 +30,6 @@
         <maven.surefire.version>3.5.4</maven.surefire.version>
         <maven.failsafe.version>3.5.4</maven.failsafe.version>
 
-        <spring-boot.version>4.1.1</spring-boot.version>
-
         <lombok.version>1.18.42</lombok.version>
         <mapstruct.version>1.6.3</mapstruct.version>
         <springdoc.openapi.starter.version>3.0.1</springdoc.openapi.starter.version>
@@ -46,25 +44,6 @@
 
     <dependencyManagement>
         <dependencies>
-            <!-- Spring Boot BOM
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-dependencies</artifactId>
-                <version>${spring-boot.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>com.fasterxml.jackson</groupId>
-                <artifactId>jackson-bom</artifactId>
-                <!- - same property is defined by Spring Boot BOM,
-                maybe we need to override it to avoid vulnerable versions - ->
-                <version>${jackson-2-bom.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            -->
 
             <dependency>
                 <groupId>org.projectlombok</groupId>
@@ -114,12 +93,11 @@
                 <version>${sqlite-jdbc.version}</version>
             </dependency>
 
-            <dependency>
+            <!-- dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-data-jpa-test</artifactId>
                 <scope>test</scope>
-                <version>${spring-boot.version}</version>
-            </dependency>
+            </dependency -->
 
         </dependencies>
     </dependencyManagement>
