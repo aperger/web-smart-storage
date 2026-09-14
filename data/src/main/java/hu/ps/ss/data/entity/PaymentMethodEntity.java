@@ -1,6 +1,7 @@
 package hu.ps.ss.data.entity;
 
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,7 +13,7 @@ import jakarta.persistence.Table;
  * The persistent class for the TFIZMOD database table.
  * 
  */
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @Data

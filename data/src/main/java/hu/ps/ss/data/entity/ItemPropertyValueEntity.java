@@ -1,6 +1,7 @@
 package hu.ps.ss.data.entity;
 
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import jakarta.persistence.*;
 import java.math.BigDecimal;
@@ -10,7 +11,7 @@ import java.math.BigDecimal;
  * The persistent class for the TTULAJERTEK database table.
  * 
  */
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @Data

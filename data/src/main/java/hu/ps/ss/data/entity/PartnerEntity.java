@@ -1,6 +1,7 @@
 package hu.ps.ss.data.entity;
 
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import jakarta.persistence.*;
 import java.math.BigDecimal;
@@ -12,7 +13,7 @@ import java.util.List;
  * The persistent class for the TPARTNEREK database table.
  * 
  */
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @Data

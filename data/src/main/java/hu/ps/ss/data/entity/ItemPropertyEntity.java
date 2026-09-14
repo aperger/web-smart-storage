@@ -1,6 +1,7 @@
 package hu.ps.ss.data.entity;
 
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import jakarta.persistence.*;
 
@@ -9,7 +10,7 @@ import jakarta.persistence.*;
  * The persistent class for the TTULAJDONSAGOK database table.
  * 
  */
-@Builder
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
 @Data

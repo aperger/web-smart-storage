@@ -1,6 +1,7 @@
 package hu.ps.ss.data.entity;
 
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import jakarta.persistence.Column;
 import java.time.LocalDateTime;
@@ -10,6 +11,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
+@SuperBuilder
 public class EntityBase extends IdentifierBase {
 
 	@Column(name="FIDO")

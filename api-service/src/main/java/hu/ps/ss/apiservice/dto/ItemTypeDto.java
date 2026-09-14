@@ -6,10 +6,12 @@ import io.swagger.v3.oas.annotations.media.Schema.RequiredMode;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.Value;
+import lombok.experimental.SuperBuilder;
 
 @Value
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
+@SuperBuilder
 @Schema(
     name = "ItemType",
     description = "Item type data transfer object under an item group."

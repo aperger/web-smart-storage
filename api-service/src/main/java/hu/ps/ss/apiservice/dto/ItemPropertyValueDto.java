@@ -6,10 +6,12 @@ import java.math.BigDecimal;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.Value;
+import lombok.experimental.SuperBuilder;
 
 @Value
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
+@SuperBuilder
 @Schema(
     name = "ItemPropertyValue",
     description = "Property value assigned to a master item."

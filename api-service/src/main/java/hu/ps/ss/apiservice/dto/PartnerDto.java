@@ -8,10 +8,12 @@ import java.time.LocalDate;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.Value;
+import lombok.experimental.SuperBuilder;
 
 @Value
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
+@SuperBuilder
 @Schema(
     name = "Partner",
     description = "Partner data transfer object used for buyers, suppliers, and mixed partners."

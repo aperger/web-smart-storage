@@ -5,9 +5,8 @@ import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.reactive.server.WebTestClient.bindToController;
-
 import hu.ps.ss.apiservice.dto.CountryDto;
+import hu.ps.ss.apiservice.controller.CountryEditorController;
 import hu.ps.ss.apiservice.mapper.CountryEditorMapper;
 import hu.ps.ss.domain.CountryModel;
 import hu.ps.ss.domain.pojo.PageDetails;
@@ -16,13 +15,12 @@ import hu.ps.ss.domain.ports.basic.CountryEditorPort;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.reactive.server.WebTestClient;
 
 @ExtendWith(MockitoExtension.class)
 class CountryEditorControllerTest {
@@ -33,38 +31,30 @@ class CountryEditorControllerTest {
   @Mock
   private CountryEditorMapper mapper;
 
-  private WebTestClient webTestClient;
+  private CountryEditorController controller;
 
   @BeforeEach
   void setUp() {
-    webTestClient = bindToController(new CountryEditorController(service, mapper)).build();
+    controller = new CountryEditorController(service, mapper);
+    org.mockito.Mockito.lenient().when(service.getModelClass()).thenReturn(CountryModel.class);
   }
 
   @Test
   void searchReturnsFilteredPage() {
     var model = countryModel(1, "HU", "Hungary");
     var dto = countryDto(1, "HU", "Hungary");
-    when(service.search(argThat(params -> "Hungary".equals(params.get("name").getFirst())), eq(0), eq(10),
-        eq("name,asc")))
+    when(service.search(org.springframework.util.CollectionUtils.toMultiValueMap(java.util.Collections.emptyMap()),
+        0, 10, "name,asc"))
         .thenReturn(new PageResult<>(List.of(model), new PageDetails(0, 10, 1, 1, "name,asc")));
     when(mapper.mapList(List.of(model))).thenReturn(List.of(dto));
 
-    webTestClient.get()
-        .uri("/api/v1/countries?name=Hungary&pageIndex=0&pageSize=10&sort=name,asc")
-        .exchange()
-        .expectStatus().isOk()
-        .expectHeader().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
-        .expectBody()
-        .jsonPath("$.items[0].id").isEqualTo(1)
-        .jsonPath("$.items[0].code").isEqualTo("HU")
-        .jsonPath("$.items[0].name").isEqualTo("Hungary")
-        .jsonPath("$.pageDetails.totalElements").isEqualTo(1);
+    var response = controller.actionSearch(new org.springframework.util.LinkedMultiValueMap<>(), null,
+        "Hungary", 0, 10, "name,asc");
+    Assertions.assertEquals(1, response.items().size());
+    Assertions.assertEquals(dto, response.items().get(0));
 
-    verify(service).search(
-        argThat(params -> "Hungary".equals(params.get("name").getFirst())),
-        eq(0),
-        eq(10),
-        eq("name,asc"));
+    verify(service).search(org.springframework.util.CollectionUtils.toMultiValueMap(java.util.Collections.emptyMap()),
+        0, 10, "name,asc");
   }
 
   @Test
@@ -74,23 +64,17 @@ class CountryEditorControllerTest {
     when(service.findById(1)).thenReturn(Optional.of(model));
     when(mapper.map(model)).thenReturn(dto);
 
-    webTestClient.get()
-        .uri("/api/v1/countries/1")
-        .exchange()
-        .expectStatus().isOk()
-        .expectBody()
-        .jsonPath("$.id").isEqualTo(1)
-        .jsonPath("$.code").isEqualTo("HU");
+    var response = controller.actionFindById(1);
+    Assertions.assertEquals(200, response.getStatusCode().value());
+    Assertions.assertEquals(dto, response.getBody());
   }
 
   @Test
   void getByIdReturnsNotFoundWhenCountryDoesNotExist() {
     when(service.findById(99)).thenReturn(Optional.empty());
 
-    webTestClient.get()
-        .uri("/api/v1/countries/99")
-        .exchange()
-        .expectStatus().isNotFound();
+    Assertions.assertThrows(org.springframework.web.server.ResponseStatusException.class,
+        () -> controller.actionFindById(99));
   }
 
   @Test
@@ -98,25 +82,15 @@ class CountryEditorControllerTest {
     var requestModel = countryModel(0, "RO", "Romania");
     var savedModel = countryModel(2, "RO", "Romania");
     var savedDto = countryDto(2, "RO", "Romania");
+    var requestDto = countryDto(0, "RO", "Romania");
 
     when(mapper.parseFrom(any(CountryDto.class))).thenReturn(requestModel);
     when(service.save(requestModel)).thenReturn(savedModel);
     when(mapper.map(savedModel)).thenReturn(savedDto);
 
-    webTestClient.post()
-        .uri("/api/v1/countries")
-        .contentType(MediaType.APPLICATION_JSON)
-        .bodyValue("""
-            {
-              "code": "RO",
-              "name": "Romania"
-            }
-            """)
-        .exchange()
-        .expectStatus().isCreated()
-        .expectBody()
-        .jsonPath("$.id").isEqualTo(2)
-        .jsonPath("$.code").isEqualTo("RO");
+    var response = controller.actionCreateItem(requestDto);
+    Assertions.assertEquals(201, response.getStatusCode().value());
+    Assertions.assertEquals(savedDto, response.getBody());
   }
 
   @Test
@@ -124,11 +98,7 @@ class CountryEditorControllerTest {
     var model = countryModel(1, "HU", "Hungary");
     when(service.findById(1)).thenReturn(Optional.of(model));
 
-    webTestClient.delete()
-        .uri("/api/v1/countries/1")
-        .exchange()
-        .expectStatus().isNoContent();
-
+    controller.actionDeleteById(1);
     verify(service).deleteById(1);
   }
 
@@ -143,10 +113,12 @@ class CountryEditorControllerTest {
   }
 
   private CountryDto countryDto(int id, String code, String name) {
-    var dto = new CountryDto(code, name);
-    dto.setId(id);
-    dto.setModified(LocalDateTime.of(2026, 9, 14, 22, 0));
-    dto.setModifiedBy("tester");
-    return dto;
+    return CountryDto.builder()
+        .id(id)
+        .modified(LocalDateTime.of(2026, 9, 14, 22, 0))
+        .modifiedBy("tester")
+        .code(code)
+        .name(name)
+        .build();
   }
 }

@@ -171,7 +171,7 @@ For each remaining entity, in order:
 
 ## Commit message for this checkpoint
 
-`test(base): start Country baseline and fix shared mapper inheritance`
+`test(base): fix Country controller test and shared builder inheritance`
 
 ## Scope guardrails
 

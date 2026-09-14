@@ -7,10 +7,12 @@ import java.math.BigDecimal;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.Value;
+import lombok.experimental.SuperBuilder;
 
 @Value
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
+@SuperBuilder
 @Schema(
     name = "VatKey",
     description = "VAT rate definition used for invoice tax calculations and Hungarian NAV integration."

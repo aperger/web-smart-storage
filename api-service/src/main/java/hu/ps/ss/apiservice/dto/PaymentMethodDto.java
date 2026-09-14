@@ -6,10 +6,12 @@ import io.swagger.v3.oas.annotations.media.Schema.RequiredMode;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.Value;
+import lombok.experimental.SuperBuilder;
 
 @Value
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
+@SuperBuilder
 @Schema(
     name = "PaymentMethod",
     description = "Payment method data transfer object used by documents and partner defaults."
