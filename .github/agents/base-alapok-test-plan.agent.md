@@ -169,6 +169,10 @@ For each remaining entity, in order:
   - same for `modified` and `modifiedBy`
 - This confirmed the need for the `@SuperBuilder` migration.
 
+## Commit message for this checkpoint
+
+`test(base): start Country baseline and fix shared mapper inheritance`
+
 ## Scope guardrails
 
 - Do **not** start Document editing in this phase.
