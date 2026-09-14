@@ -11,11 +11,17 @@ import org.mapstruct.Mapping;
 public interface ItemTypeMapper extends ObjectMapperBase<ItemTypeEntity, ItemTypeModel> {
 
   @Override
+  @Mapping(source = "id", target = "id")
+  @Mapping(source = "modified", target = "modified")
+  @Mapping(source = "modifiedBy", target = "modifiedBy")
   @Mapping(source = "itemGroup.id", target = "itemGroupId")
   ItemTypeModel map(final ItemTypeEntity source);
 
 
   @Override
+  @Mapping(source = "id", target = "id")
+  @Mapping(source = "modified", target = "modified")
+  @Mapping(source = "modifiedBy", target = "modifiedBy")
   @Mapping(target = "itemGroup", ignore = true)
   ItemTypeEntity parseFrom(final ItemTypeModel source);
 }

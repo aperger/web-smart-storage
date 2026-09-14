@@ -1,0 +1,111 @@
+package hu.ps.ss.infra.database.service;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+import hu.ps.ss.data.entity.CountryEntity;
+import hu.ps.ss.infra.database.mapper.CountryMapper;
+import hu.ps.ss.infra.database.repository.CountryRepository;
+import java.time.LocalDateTime;
+import org.junit.jupiter.api.Test;
+import org.mapstruct.factory.Mappers;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
+import org.springframework.boot.data.jpa.autoconfigure.DataJpaRepositoriesAutoConfiguration;
+import org.springframework.boot.persistence.autoconfigure.EntityScan;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.autoconfigure.AutoConfigurationPackage;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.util.LinkedMultiValueMap;
+
+@DataJpaTest
+@Import(CountryEntityServiceTest.TestConfig.class)
+@ActiveProfiles("test")
+class CountryEntityServiceTest {
+
+  @Autowired
+  private CountryRepository repository;
+
+  @Autowired
+  private CountryEntityService service;
+
+  @Test
+  void searchPaginatedFiltersByCodeCaseInsensitively() {
+    repository.save(countryEntity("HU", "Hungary"));
+    repository.save(countryEntity("DE", "Germany"));
+
+    var params = new LinkedMultiValueMap<String, String>();
+    params.add("code", "hu");
+
+    var result = service.searchPaginated(params, 0, 10, "name,asc");
+
+    assertThat(result.getContent())
+        .extracting(country -> country.getCode())
+        .containsExactly("HU");
+  }
+
+  @Test
+  void searchPaginatedFiltersByNameCaseInsensitively() {
+    repository.save(countryEntity("HU", "Hungary"));
+    repository.save(countryEntity("AT", "Austria"));
+
+    var params = new LinkedMultiValueMap<String, String>();
+    params.add("name", "ungar");
+
+    var result = service.searchPaginated(params, 0, 10, "name,asc");
+
+    assertThat(result.getContent())
+        .extracting(country -> country.getName())
+        .containsExactly("Hungary");
+  }
+
+  @Test
+  void saveItemPersistsCountry() {
+    var model = new hu.ps.ss.domain.CountryModel();
+    model.setCode("RO");
+    model.setName("Romania");
+    model.setModified(LocalDateTime.of(2026, 9, 14, 22, 0));
+    model.setModifiedBy("tester");
+
+    var saved = service.saveItem(model);
+
+    assertThat(saved.getId()).isPositive();
+    assertThat(repository.findById(saved.getId()))
+        .get()
+        .extracting(CountryEntity::getCode, CountryEntity::getName)
+        .containsExactly("RO", "Romania");
+  }
+
+  private CountryEntity countryEntity(String code, String name) {
+    var entity = new CountryEntity(code, name);
+    entity.setModified(LocalDateTime.of(2026, 9, 14, 22, 0));
+    entity.setModifiedBy("tester");
+    return entity;
+  }
+
+  @SpringBootConfiguration
+  @AutoConfigurationPackage
+  @EntityScan(basePackageClasses = CountryEntity.class)
+  @ImportAutoConfiguration(DataJpaRepositoriesAutoConfiguration.class)
+  @EnableJpaRepositories(basePackageClasses = CountryRepository.class)
+  @Import(TestConfig.class)
+  static class BootConfig {
+  }
+
+  @TestConfiguration
+  static class TestConfig {
+    @Bean
+    CountryMapper countryMapper() {
+      return Mappers.getMapper(CountryMapper.class);
+    }
+
+    @Bean
+    CountryEntityService countryEntityService(CountryMapper mapper, CountryRepository repository) {
+      return new CountryEntityService(mapper, repository);
+    }
+  }
+}

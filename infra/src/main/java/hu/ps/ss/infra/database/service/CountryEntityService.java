@@ -4,6 +4,8 @@ import hu.ps.ss.data.entity.CountryEntity;
 import hu.ps.ss.domain.CountryModel;
 import hu.ps.ss.infra.database.mapper.CountryMapper;
 import hu.ps.ss.infra.database.repository.CountryRepository;
+import jakarta.persistence.criteria.Predicate;
+import java.util.ArrayList;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
@@ -24,6 +26,26 @@ public class CountryEntityService extends
 
   @Override
   Specification<CountryEntity> createSearchSpecification(MultiValueMap<String, String> params) {
-    return Specification.unrestricted();
+    return (root, query, criteriaBuilder) -> {
+      var predicates = new ArrayList<Predicate>();
+
+      var code = params.getFirst("code");
+      if (code != null && !code.isBlank()) {
+        predicates.add(criteriaBuilder.like(
+            criteriaBuilder.lower(root.get("code")),
+            "%" + getDecodedUrlValue(code).toLowerCase() + "%"));
+      }
+
+      var name = params.getFirst("name");
+      if (name != null && !name.isBlank()) {
+        predicates.add(criteriaBuilder.like(
+            criteriaBuilder.lower(root.get("name")),
+            "%" + getDecodedUrlValue(name).toLowerCase() + "%"));
+      }
+
+      return predicates.isEmpty()
+          ? criteriaBuilder.conjunction()
+          : criteriaBuilder.and(predicates.toArray(Predicate[]::new));
+    };
   }
 }

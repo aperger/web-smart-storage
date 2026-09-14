@@ -3,6 +3,7 @@ package hu.ps.ss.data.mappers;
 import org.mapstruct.CollectionMappingStrategy;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.MapperConfig;
+import org.mapstruct.MappingInheritanceStrategy;
 import org.mapstruct.NullValueMappingStrategy;
 import org.mapstruct.ReportingPolicy;
 import org.mapstruct.ap.internal.gem.MappingConstantsGem.ComponentModelGem;
@@ -12,7 +13,8 @@ import org.mapstruct.ap.internal.gem.MappingConstantsGem.ComponentModelGem;
     componentModel = ComponentModelGem.SPRING,
     injectionStrategy = InjectionStrategy.CONSTRUCTOR,
     collectionMappingStrategy = CollectionMappingStrategy.ADDER_PREFERRED,
-    nullValueIterableMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT
+    nullValueIterableMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT,
+    mappingInheritanceStrategy = MappingInheritanceStrategy.AUTO_INHERIT_ALL_FROM_CONFIG
 )
 public interface CommonMapperConfig {
 
