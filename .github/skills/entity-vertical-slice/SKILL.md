@@ -36,9 +36,11 @@ Entities already partially wired (check current state before starting each):
   corresponding infra/API tests pass.
 - `Currency` — fully wired and validated in the repo; service filters are implemented and the
   corresponding infra/API tests pass.
-- `ItemGroup`, `ItemType`, `PaymentMethod` — domain model/port and data entities exist; some
-  infra mappers exist (`ItemGroupMapper`, `ItemTypeMapper`); repository/service/adapter and the
-  full api-service layer are still missing for most.
+- `ItemGroup` — fully wired and validated in the repo; service filters are implemented and the
+  corresponding infra/API tests pass.
+- `ItemType`, `PaymentMethod` — domain model/port and data entities exist; some infra mappers
+  exist (`ItemGroupMapper`, `ItemTypeMapper`); repository/service/adapter and the full
+  api-service layer are still missing for most.
 - `Storage` — present in the Qt desktop app's Basics menu, but still missing the Java domain/data/
   infra/api-service slice in this repository.
 
