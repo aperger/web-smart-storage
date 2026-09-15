@@ -13,8 +13,8 @@ tools: ['read_file', 'list_dir', 'grep_search', 'run_in_terminal', 'get_errors',
 | Phase ID | Scope | Status | Owner | Branch | Commit(s) | Tests/Build | Manual Check | Notes |
 |---|---|---|---|---|---|---|---|---|
 | FE-00 | Baseline decisions and scaffolding prerequisites | Planned | TBD | TBD | TBD | TBD | TBD | Confirm Ionic/Angular versions and workspace standards |
-| FE-01 | Create Ionic project in `frontend/` with app title WebSmartStorage | Planned | TBD | TBD | TBD | TBD | TBD | Prefer official Ionic sidemenu starter |
-| FE-02 | JSON-driven configurable two-level left hamburger menu | Planned | TBD | TBD | TBD | TBD | TBD | First level as accordion groups, second level as items |
+| FE-01 | Create Ionic project in `frontend/` with app title WebSmartStorage | ✅ Complete | @klm96551 | main | 5d1e42a | npm run build ✅ | ✅ App runs on localhost:4200 | Used official Ionic sidemenu starter, consolidated to frontend/ |
+| FE-02 | JSON-driven configurable two-level left hamburger menu | ✅ Complete | @klm96551 | main | 6d30528 | npm run build ✅ | ✅ Menu loads, accordion groups expand | MenuComponent NgModule-style, Signal-based service, JSON config |
 | FE-03 | Light/dark theme switch with LocalStorage persistence | Planned | TBD | TBD | TBD | TBD | TBD | Keep Ionic default CSS largely intact |
 | FE-04 | Shared list-page pattern using table wrapper integration approach | Planned | TBD | TBD | TBD | TBD | TBD | Search/filter/list interaction in QtSmartStorage style |
 | FE-05 | First example vertical slice: ItemGroups list -> row click -> editor view | Planned | TBD | TBD | TBD | TBD | TBD | Parent/child example route and components |
@@ -233,3 +233,4 @@ Complete implementation guide with code examples: `frontend/THEME-STRATEGY.md`
 | 2026-09-15 | @Atilla-Perger_afklm + Copilot planning session | Analyzed logo and extracted primary colors: Blue #2F71A2, Orange #FF9933. Updated FE-03 theming strategy with palette guidance. |
 | 2026-09-15 | @Atilla-Perger_afklm + Copilot planning session | Generated complete light/dark color schemas with CSS variables. Created `frontend/THEME-STRATEGY.md` implementation guide with ThemeService, SCSS structure, and zero-customization approach. |
 | 2026-09-15 | @Atilla-Perger_afklm + Copilot planning session | Updated project name to `smart-storage-frontend` (from web-smart-storage). Updated FE-01 bootstrap command and directory structure. |
+| 2026-09-15 | @klm96551 + Copilot | **FE-02 COMPLETE**: JSON-driven two-level menu system implemented. MenuComponent with NgModule architecture, MenuService using Signals, menu.json config with 3 groups. Build verified. Commit: 6d30528. Ready for FE-03 (theme system). |
