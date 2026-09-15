@@ -42,8 +42,8 @@ Entities already partially wired (check current state before starting each):
   and `name` is implemented and the corresponding infra/API tests pass.
 - `PaymentMethod` — fully wired and validated in the repo; the service filters for `name`,
   `dueDate`, and `invoiceFormat` pass the focused infra/API checks.
-- `Storage` — present in the Qt desktop app's Basics menu, but still missing the Java domain/data/
-  infra/api-service slice in this repository.
+- `Storage` — fully wired and validated in the repo; service filters for `name` and `type`
+  pass the focused infra/API checks.
 
 For each entity in this phase, use `@vertical-slice-kickoff` with the entity name; it will call
 `@persistence-adapter-agent` then `@api-layer-agent` (domain layer is usually already present —
