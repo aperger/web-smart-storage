@@ -12,9 +12,11 @@ This directory will host the Ionic/Angular frontend for WebSmartStorage.
 ## Current Scope
 
 - Ionic Angular project in `frontend/` (sidemenu layout baseline).
-- Two-level left hamburger menu:
-  - Level 1: menu groups (accordion).
-  - Level 2: menu items.
+- **Architecture:** Standalone components (Angular 22 modern pattern).
+- Two-level left hamburger menu with three groups:
+  - **Base Data:** Countries, VAT Keys, Currencies, Item Groups, Item Types, Payment Methods, Partners, Master Items
+  - **Documents:** Invoices, NAV Invoices
+  - **System:** Profile, Settings, Logout
 - Menu and route metadata loaded from JSON config.
 - Light/dark theme switch persisted in LocalStorage.
 - First feature slice: ItemGroups list view with row click navigation to editor view.
@@ -35,6 +37,8 @@ ionic start smart-storage-frontend sidemenu --type=angular --skip-git
 ```
 
 This creates the `smart-storage-frontend` Ionic Angular application with a sidemenu layout baseline.
+
+**Note:** The project has been refactored to use **standalone components** (Angular 22 modern pattern). All components use `standalone: true` and import dependencies directly in their `imports` arrays.
 
 ## Planned Structure (Angular conventions)
 
