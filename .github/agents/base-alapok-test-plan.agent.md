@@ -175,6 +175,11 @@ For each remaining entity, in order:
 
 `test(base): fix Country controller test and shared builder inheritance`
 
+Use short conventional commit messages only, for example:
+- `feat(base): add VatKey entity slice`
+- `test(base): add VatKey service and controller coverage`
+- Do not add a Co-authored-by trailer to repository commits.
+
 ## Scope guardrails
 
 - Do **not** start Document editing in this phase.

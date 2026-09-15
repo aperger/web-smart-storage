@@ -57,6 +57,10 @@ mvn -q -pl api-service -am compile && \
   `ObjectMapper*` base interface.
 - `mvn -q -pl domain,data,infra,api-service -am test` passes.
 - No unrelated entity/module touched.
+- Use short conventional commit messages for any checkpoint commit, for example:
+  - `feat(base): add VatKey entity slice`
+  - `test(base): add VatKey service and controller coverage`
+  - Never include a Co-authored-by trailer in this repository.
 - Update the "Phase 1 status" note in `.github/skills/entity-vertical-slice/SKILL.md` to reflect
   the entity now being fully wired.
 
