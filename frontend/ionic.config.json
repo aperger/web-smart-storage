@@ -1,0 +1,7 @@
+{
+  "name": "frontend/smart-storage-frontend",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
