@@ -1,6 +1,19 @@
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+import { bootstrapApplication } from '@angular/platform-browser';
+import { provideRouter, RouteReuseStrategy, withPreloading, PreloadAllModules } from '@angular/router';
+import { provideHttpClient } from '@angular/common/http';
+import { IonicRouteStrategy, provideIonicAngular } from '@ionic/angular';
 
-import { AppModule } from './app/app.module';
+import { AppComponent } from './app/app.component';
+import { routes } from './app/app-routing.module';
 
-platformBrowserDynamic().bootstrapModule(AppModule)
-  .catch(err => console.log(err));
+bootstrapApplication(AppComponent, {
+  providers: [
+    provideHttpClient(),
+    provideRouter(routes, withPreloading(PreloadAllModules)),
+    provideIonicAngular(),
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
+  ]
+}).catch(err => console.log(err));
+
+
+

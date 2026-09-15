@@ -34,14 +34,7 @@
           "label": "Item Types",
           "route": "/itemtypes",
           "icon": "list-outline"
-        }
-      ]
-    },
-    {
-      "id": "management",
-      "label": "Management",
-      "icon": "settings-outline",
-      "items": [
+        },
         {
           "id": "paymentmethods",
           "label": "Payment Methods",
@@ -80,6 +73,32 @@
           "icon": "cloud-upload-outline"
         }
       ]
+    },
+    {
+      "id": "system",
+      "label": "System",
+      "icon": "settings",
+      "items": [
+        {
+          "id": "profile",
+          "label": "Profile",
+          "route": "/profile",
+          "icon": "person-circle-outline"
+        },
+        {
+          "id": "settings",
+          "label": "Settings",
+          "route": "/settings",
+          "icon": "settings-outline"
+        },
+        {
+          "id": "logout",
+          "label": "Logout",
+          "route": "/logout",
+          "icon": "log-out-outline"
+        }
+      ]
     }
   ]
 }
+

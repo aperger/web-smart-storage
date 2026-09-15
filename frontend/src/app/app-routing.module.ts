@@ -1,7 +1,6 @@
-import { NgModule } from '@angular/core';
-import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import { PreloadAllModules, Route } from '@angular/router';
 
-const routes: Routes = [
+export const routes: Route[] = [
   {
     path: '',
     redirectTo: 'folder/Inbox',
@@ -13,10 +12,3 @@ const routes: Routes = [
   }
 ];
 
-@NgModule({
-  imports: [
-    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules, bindToComponentInputs: true })
-  ],
-  exports: [RouterModule]
-})
-export class AppRoutingModule {}
