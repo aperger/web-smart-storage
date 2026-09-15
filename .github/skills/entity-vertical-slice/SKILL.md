@@ -40,8 +40,8 @@ Entities already partially wired (check current state before starting each):
   corresponding infra/API tests pass.
 - `ItemType` — fully wired and validated in the repo; parent-child filtering by `itemGroupId`
   and `name` is implemented and the corresponding infra/API tests pass.
-- `PaymentMethod` — domain model/port and data entities exist; some infra mappers exist;
-  repository/service/adapter and the full api-service layer are still missing for most.
+- `PaymentMethod` — fully wired and validated in the repo; the service filters for `name`,
+  `dueDate`, and `invoiceFormat` pass the focused infra/API checks.
 - `Storage` — present in the Qt desktop app's Basics menu, but still missing the Java domain/data/
   infra/api-service slice in this repository.
 
