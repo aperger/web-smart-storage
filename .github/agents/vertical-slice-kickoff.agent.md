@@ -64,6 +64,19 @@ mvn -q -pl api-service -am compile && \
 - Update the "Phase 1 status" note in `.github/skills/entity-vertical-slice/SKILL.md` to reflect
   the entity now being fully wired.
 
+## Standard Workflow for Documentation Updates
+
+Every time you modify planning documents (agent, skill, README, strategy guides), commit your changes with:
+
+1. **Concise conventional commit message** (examples):
+   - `docs(frontend): add theme strategy with light/dark schemas`
+   - `docs(frontend): update bootstrap command and project structure`
+   - `docs(planning): add color palette analysis from logo`
+
+2. **Update changelog** in the affected document (typically at the end of the file).
+
+3. **One commit per logical change** — do not batch unrelated doc updates into single commits.
+
 ## Handoff Notes
 
 After one entity is done, repeat the same sequence for the next entity in the current phase.

@@ -24,7 +24,11 @@ Use this skill when:
 - Confirm one commit per phase.
 
 ### FE-01 — Project bootstrap
-- Create Ionic Angular app in `frontend/` from official sidemenu starter.
+- Create Ionic Angular app in `frontend/` from official sidemenu starter:
+  ```bash
+  cd frontend
+  ionic start smart-storage-frontend sidemenu --type=angular --skip-git
+  ```
 - Set title/branding to **WebSmartStorage**.
 - Enable PWA support.
 
@@ -85,4 +89,5 @@ Use this skill when:
 When requirements shift, update:
 1. The phase table in the agent file.
 2. The changelog entry at the end of the agent file.
+3. Commit all doc changes with a single conventional commit message (e.g., `docs(frontend): update project name and bootstrap command`).
 

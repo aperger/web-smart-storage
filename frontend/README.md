@@ -25,10 +25,24 @@ This directory will host the Ionic/Angular frontend for WebSmartStorage.
 - Native OS packaging/deployment targets.
 - Third-level menu nesting.
 
+## Bootstrap Command
+
+To start the frontend project:
+
+```bash
+cd frontend
+ionic start smart-storage-frontend sidemenu --type=angular --skip-git
+```
+
+This creates the `smart-storage-frontend` Ionic Angular application with a sidemenu layout baseline.
+
 ## Planned Structure (Angular conventions)
 
 ```text
 frontend/
+  angular.json
+  package.json
+  ionic.config.json
   src/
     app/
       core/
@@ -47,6 +61,11 @@ frontend/
     assets/
       config/
         menu.json
+      styles/
+        variables/
+          colors-light.scss
+          colors-dark.scss
+        theme.scss
 ```
 
 ## Development Expectations
