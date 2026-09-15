@@ -38,6 +38,15 @@ Create an Ionic/Angular PWA frontend in this repository under `frontend/`, ready
   - Native OS packaging (Capacitor native targets).
   - Third menu level (submenu).
 
+## Technology Stack & Coding Conventions
+
+### Forms: ReactiveForms + Signals
+- **All editor forms** (create/edit/search filters) use `ReactiveForms` with `FormBuilder` and `FormGroup`.
+- Use **Signals** for component-level UI state only (theme, menu expanded/collapsed, loading flags, modals).
+- Rationale: ReactiveForms is mature, handles complex validation/async validators, and is battle-tested. Signals are adopted selectively for non-form state where reactive side effects have significant benefit.
+- Do not use template-based `ngModel` for editors (hard to test, limited validation).
+- Bridge forms and signals with `toSignal(form.valueChanges)` only when needed for reactive side effects.
+
 ## Implementation Steps
 
 ### FE-00 — Baseline and conventions
@@ -67,13 +76,19 @@ Create an Ionic/Angular PWA frontend in this repository under `frontend/`, ready
 ### FE-03 — Theming (light/dark) with LocalStorage
 
 1. Create a theme service handling:
-   - current theme state,
+   - current theme state (via Signal),
    - apply/remove theme classes,
    - persist selection to LocalStorage,
    - initialize on startup.
-2. Define logo-inspired token palette for both themes.
-3. Add UI toggle (header or side menu settings area).
-4. Keep custom styling minimal and Ionic-variable-first.
+2. Define logo-inspired token palette for both themes using CSS custom properties:
+   - **Light theme:** Blue primary (#2F71A2), Orange secondary (#FF9933)
+   - **Dark theme:** Orange primary (#FF9933), Blue secondary (#2F71A2)
+3. Organize SCSS in `src/assets/styles/variables/{colors-light,colors-dark}.scss` and bundle in `src/assets/styles/theme.scss`.
+4. Apply theme via body class (`theme-light` / `theme-dark`).
+5. Add UI toggle (header or side menu settings area).
+6. **No per-component customization:** all Ionic components inherit theme colors automatically via CSS variables.
+
+See `frontend/THEME-STRATEGY.md` for complete implementation guide with code examples.
 
 ### FE-04 — Reusable list-view pattern with table wrapper
 
@@ -155,6 +170,30 @@ frontend/
 
 Frontend starts in this repository for now. It may be moved later into a separate dedicated frontend repository, but that is not part of this phase.
 
+## Theme Color Palette (from logo analysis)
+
+Extracted from https://pergersoft.hu/sites/default/files/pslogosmall.png:
+- **Primary Blue:** `#2F71A2` (professional, medium-dark)
+- **Primary Orange:** `#FF9933` (warm, vibrant)
+
+### Light Theme Color Schema
+```
+--ion-color-primary:     #2F71A2 (Blue)
+--ion-color-secondary:   #FF9933 (Orange)
+--ion-background-color:  #FFFFFF
+--ion-text-color:        #000000
+```
+
+### Dark Theme Color Schema
+```
+--ion-color-primary:     #FF9933 (Orange)
+--ion-color-secondary:   #2F71A2 (Blue)
+--ion-background-color:  #1A1A1A
+--ion-text-color:        #E8E8E8
+```
+
+Complete implementation guide with code examples: `frontend/THEME-STRATEGY.md`
+
 ## TableWrapper Source Note
 
 - Reuse/copy the existing TableWrapper component when list pages are implemented (FE-04/FE-05).
@@ -167,3 +206,6 @@ Frontend starts in this repository for now. It may be moved later into a separat
 |---|---|---|
 | 2026-09-15 | @Atilla-Perger_afklm + Copilot planning session | Initial Ionic/Angular frontend kickoff plan with phase table, delivery gates, and handoff notes. |
 | 2026-09-15 | @Atilla-Perger_afklm + Copilot planning session | Added explicit TableWrapper reuse instruction, known source path, and note that source path may vary by colleague. |
+| 2026-09-15 | @Atilla-Perger_afklm + Copilot planning session | Added ReactiveForms + Signals technology guidelines: use ReactiveForms for all editor forms, Signals for UI state only. |
+| 2026-09-15 | @Atilla-Perger_afklm + Copilot planning session | Analyzed logo and extracted primary colors: Blue #2F71A2, Orange #FF9933. Updated FE-03 theming strategy with palette guidance. |
+| 2026-09-15 | @Atilla-Perger_afklm + Copilot planning session | Generated complete light/dark color schemas with CSS variables. Created `frontend/THEME-STRATEGY.md` implementation guide with ThemeService, SCSS structure, and zero-customization approach. |

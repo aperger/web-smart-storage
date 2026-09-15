@@ -36,9 +36,13 @@ Use this skill when:
 - Wire router from config metadata.
 
 ### FE-03 — Theme management
-- Implement light/dark theme service.
+- Implement light/dark theme service with Signal-based state.
 - Persist selected theme in LocalStorage.
-- Apply a logo-inspired palette through Ionic variables with minimal overrides.
+- Define CSS custom properties (--ion-color-*) for both themes:
+  - **Light:** Blue primary (#2F71A2), Orange secondary (#FF9933), white background, black text.
+  - **Dark:** Orange primary (#FF9933), Blue secondary (#2F71A2), dark background (#1A1A1A), light text (#E8E8E8).
+- Organize SCSS in `src/assets/styles/variables/` and bundle in `theme.scss`.
+- Apply theme via body class toggle (no per-component overrides needed).
 
 ### FE-04 — Shared list pattern
 - Build reusable list-page structure for search/filter/table behavior.
@@ -68,6 +72,8 @@ Use this skill when:
 - Do not add third-level menus.
 - Do not introduce heavy Ionic CSS rewrites.
 - Do not add native OS packaging in this phase.
+- **Form strategy:** Use ReactiveForms for all editor forms (create/edit/search). Use Signals only for UI state (theme, menu toggle, loading flags). Avoid template-based ngModel for editors.
+- **No pure-Signal forms:** Signals for forms are still stabilizing in the Angular ecosystem; wait for broader adoption before using them as the primary form strategy.
 
 ## Primary Artifacts
 

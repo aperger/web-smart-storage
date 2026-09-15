@@ -55,6 +55,34 @@ frontend/
 - Add or update component tests together with implementation.
 - Run build and relevant tests before each phase commit.
 - Perform manual UI verification for responsive/menu/theme/list-detail behavior.
+- **Forms:** Use ReactiveForms with `FormBuilder` and `FormGroup` for all editor/filter forms. Use Signals selectively for component UI state (theme, loading, menu expanded) where reactive side effects provide significant benefit.
+- **Avoid:** Template-based ngModel for editors, and pure-Signal-based forms (not yet stable enough).
+
+## Color Palette for Themes
+
+Primary colors extracted from https://pergersoft.hu/sites/default/files/pslogosmall.png:
+- **Blue:** `#2F71A2` (professional, medium-dark)
+- **Orange:** `#FF9933` (warm, vibrant)
+
+### Implementation Approach
+
+Use CSS custom properties (Ionic variables) to define both theme schemas without per-component customization:
+
+**Light Theme:**
+- Primary: Blue (#2F71A2) → buttons, links, highlights
+- Secondary: Orange (#FF9933) → accents, badges
+- Background: White (#FFFFFF)
+- Text: Black (#000000)
+
+**Dark Theme:**
+- Primary: Orange (#FF9933) → buttons, links, highlights (high contrast on dark)
+- Secondary: Blue (#2F71A2) → info, secondary actions
+- Background: Dark (#1A1A1A)
+- Text: Light (#E8E8E8)
+
+All Ionic components automatically use these variables. Switch themes with a single body class toggle.
+
+**See:** `frontend/THEME-STRATEGY.md` for complete implementation guide with code examples, file structure, and ThemeService implementation.
 
 ## Related Planning Files
 
