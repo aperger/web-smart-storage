@@ -72,12 +72,12 @@ Use this skill when:
 
 ## Guardrails
 
+- **Standalone Components:** All components must be standalone (`standalone: true`). Import Ionic components directly from `@ionic/angular`. No NgModule for component declarations.
+- **Forms:** Use ReactiveForms for all editor forms (create/edit/search). Use Signals only for UI state (theme, menu toggle, loading flags). Avoid template-based ngModel for editors.
 - Do not implement OIDC/Keycloak login in this phase.
 - Do not add third-level menus.
 - Do not introduce heavy Ionic CSS rewrites.
 - Do not add native OS packaging in this phase.
-- **Form strategy:** Use ReactiveForms for all editor forms (create/edit/search). Use Signals only for UI state (theme, menu toggle, loading flags). Avoid template-based ngModel for editors.
-- **No pure-Signal forms:** Signals for forms are still stabilizing in the Angular ecosystem; wait for broader adoption before using them as the primary form strategy.
 
 ## Primary Artifacts
 

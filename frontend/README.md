@@ -74,8 +74,9 @@ frontend/
 - Add or update component tests together with implementation.
 - Run build and relevant tests before each phase commit.
 - Perform manual UI verification for responsive/menu/theme/list-detail behavior.
+- **Components:** All components are **standalone** (`standalone: true`). Import Ionic components directly from `@ionic/angular` in each component's `imports` array. Do NOT declare components in NgModule.
 - **Forms:** Use ReactiveForms with `FormBuilder` and `FormGroup` for all editor/filter forms. Use Signals selectively for component UI state (theme, loading, menu expanded) where reactive side effects provide significant benefit.
-- **Avoid:** Template-based ngModel for editors, and pure-Signal-based forms (not yet stable enough).
+- **Avoid:** Template-based ngModel for editors, NgModule-based component declarations, and pure-Signal-based forms (not yet stable enough).
 
 ## Color Palette for Themes
 

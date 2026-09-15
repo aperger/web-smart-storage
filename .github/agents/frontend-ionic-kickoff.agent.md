@@ -14,7 +14,7 @@ tools: ['read_file', 'list_dir', 'grep_search', 'run_in_terminal', 'get_errors',
 |---|---|---|---|---|---|---|---|---|
 | FE-00 | Baseline decisions and scaffolding prerequisites | Planned | TBD | TBD | TBD | TBD | TBD | Confirm Ionic/Angular versions and workspace standards |
 | FE-01 | Create Ionic project in `frontend/` with app title WebSmartStorage | ✅ Complete | @klm96551 | main | 5d1e42a | npm run build ✅ | ✅ App runs on localhost:4200 | Used official Ionic sidemenu starter, consolidated to frontend/ |
-| FE-02 | JSON-driven configurable two-level left hamburger menu | ✅ Complete | @klm96551 | main | 6d30528 | npm run build ✅ | ✅ Menu loads, accordion groups expand | MenuComponent NgModule-style, Signal-based service, JSON config |
+| FE-02 | JSON-driven configurable two-level left hamburger menu | ✅ Complete | @klm96551 | main | 6d30528 | npm run build ✅ | ✅ Menu loads, accordion groups expand | **Updated:** MenuComponent should use standalone components (Angular 22 modern pattern). Refactor in progress. |
 | FE-03 | Light/dark theme switch with LocalStorage persistence | Planned | TBD | TBD | TBD | TBD | TBD | Keep Ionic default CSS largely intact |
 | FE-04 | Shared list-page pattern using table wrapper integration approach | Planned | TBD | TBD | TBD | TBD | TBD | Search/filter/list interaction in QtSmartStorage style |
 | FE-05 | First example vertical slice: ItemGroups list -> row click -> editor view | Planned | TBD | TBD | TBD | TBD | TBD | Parent/child example route and components |
@@ -39,6 +39,13 @@ Create an Ionic/Angular PWA frontend in this repository under `frontend/`, ready
   - Third menu level (submenu).
 
 ## Technology Stack & Coding Conventions
+
+### Component Architecture: Standalone Components (Modern Angular 22 + Ionic 9)
+- **All components are standalone** (marked with `standalone: true` in the decorator).
+- **No NgModule for components.** Import only what each component needs via the `imports` array.
+- Ionic 9 provides standalone component imports: import `IonMenu`, `IonItem`, `IonAccordion`, etc. directly from `@ionic/angular`.
+- Example: `@Component({ selector: 'app-menu', standalone: true, imports: [IonMenu, IonItem, CommonModule, ...] })`
+- Rationale: Standalone components are the modern pattern in Angular 22+; they reduce boilerplate, improve tree-shaking, and align with Ionic 9's component-first design.
 
 ### Forms: ReactiveForms + Signals
 - **All editor forms** (create/edit/search filters) use `ReactiveForms` with `FormBuilder` and `FormGroup`.
@@ -72,11 +79,14 @@ Create an Ionic/Angular PWA frontend in this repository under `frontend/`, ready
 
 1. Add menu configuration JSON under `frontend/src/assets/config/menu.json`.
 2. Define model types (`MenuGroup`, `MenuItem`) in app code.
-3. Build left-side menu as:
+3. Build left-side menu component as **standalone**:
+   - Import `IonMenu`, `IonHeader`, `IonItem`, `IonAccordion`, `IonAccordionGroup`, `IonList`, `IonLabel`, `IonIcon`, `CommonModule` directly in component `imports` array.
+   - Do NOT declare in NgModule.
+4. Render menu as:
    - Level 1: accordion groups.
    - Level 2: navigable items inside each group.
-4. Build router setup so each menu item maps to route details from config.
-5. Enforce no third-level nesting in the schema.
+5. Wire router so each menu item maps to route details from config.
+6. Enforce no third-level nesting in the schema.
 
 ### FE-03 — Theming (light/dark) with LocalStorage
 
