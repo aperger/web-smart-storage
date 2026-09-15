@@ -3,14 +3,17 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "./out-tsc/spec",
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "types": [
-      "vitest/globals"
+      "jest",
+      "node"
     ]
   },
   "include": [
     "src/**/*.spec.ts",
     "src/**/*.d.ts",
-    "src/test-setup.ts",
-    "src/**/*.module.ts"
+    "setup-jest.ts"
   ]
 }

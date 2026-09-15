@@ -1,43 +1,35 @@
-<ion-menu side="start" menuId="main-menu" contentId="main-content">
-  <ion-header>
-    <ion-toolbar color="primary">
-      <ion-title>WebSmartStorage</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content>
+  <ng-container *ngIf="menuService.isLoading()">
+    <ion-item>
+      <ion-label>Loading menu...</ion-label>
+    </ion-item>
+  </ng-container>
 
-  <ion-content>
-    <ng-container *ngIf="menuService.isLoading()">
-      <ion-item>
-        <ion-label>Loading menu...</ion-label>
-      </ion-item>
-    </ng-container>
+  <ng-container *ngIf="menuService.error()">
+    <ion-item color="danger">
+      <ion-label>{{ menuService.error() }}</ion-label>
+    </ion-item>
+  </ng-container>
 
-    <ng-container *ngIf="menuService.error()">
-      <ion-item color="danger">
-        <ion-label>{{ menuService.error() }}</ion-label>
-      </ion-item>
-    </ng-container>
+  <ng-container *ngIf="!menuService.isLoading() && !menuService.error()">
+    <ion-accordion-group>
+      <ng-container *ngFor="let group of menuService.menuGroups()">
+        <ion-accordion [value]="group.id">
+          <ion-item slot="header" color="light">
+            <ion-icon slot="start" [name]="group.icon"></ion-icon>
+            <ion-label>{{ group.label }}</ion-label>
+          </ion-item>
 
-    <ng-container *ngIf="!menuService.isLoading() && !menuService.error()">
-      <ion-accordion-group>
-        <ng-container *ngFor="let group of menuService.menuGroups()">
-          <ion-accordion [value]="group.id">
-            <ion-item slot="header" color="light">
-              <ion-icon slot="start" [name]="group.icon"></ion-icon>
-              <ion-label>{{ group.label }}</ion-label>
-            </ion-item>
-
-            <ion-list slot="content">
-              <ng-container *ngFor="let item of group.items">
-                <ion-item [routerLink]="item.route" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-                  <ion-icon slot="start" [name]="item.icon"></ion-icon>
-                  <ion-label>{{ item.label }}</ion-label>
-                </ion-item>
-              </ng-container>
-            </ion-list>
-          </ion-accordion>
-        </ng-container>
-      </ion-accordion-group>
-    </ng-container>
-  </ion-content>
-</ion-menu>
+          <ion-list slot="content">
+            <ng-container *ngFor="let item of group.items">
+              <ion-item [routerLink]="item.route" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+                <ion-icon slot="start" [name]="item.icon"></ion-icon>
+                <ion-label>{{ item.label }}</ion-label>
+              </ion-item>
+            </ng-container>
+          </ion-list>
+        </ion-accordion>
+      </ng-container>
+    </ion-accordion-group>
+  </ng-container>
+</ion-content>

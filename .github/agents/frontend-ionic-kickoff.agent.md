@@ -18,7 +18,8 @@ tools: ['read_file', 'list_dir', 'grep_search', 'run_in_terminal', 'get_errors',
 | FE-03 | Light/dark theme switch with LocalStorage persistence | Planned | TBD | TBD | TBD | TBD | TBD | Keep Ionic default CSS largely intact |
 | FE-04 | Shared list-page pattern using table wrapper integration approach | Planned | TBD | TBD | TBD | TBD | TBD | Search/filter/list interaction in QtSmartStorage style |
 | FE-05 | First example vertical slice: ItemGroups list -> row click -> editor view | Planned | TBD | TBD | TBD | TBD | TBD | Parent/child example route and components |
-| FE-06 | Stabilization: tests, documentation, quality gates | Planned | TBD | TBD | TBD | TBD | TBD | Per-phase commit + tests/build/manual validation |
+| FE-06 | Jest + Playwright test framework setup | Planned | TBD | TBD | TBD | TBD | TBD | Initialize Jest unit tests and Playwright e2e baseline, add first desktop menu visibility test |
+| FE-07 | Stabilization: documentation, quality gates, build/test CI | Planned | TBD | TBD | TBD | TBD | TBD | Per-phase commit + tests/build/manual validation + CI setup |
 
 ## Goal
 
@@ -46,6 +47,16 @@ Create an Ionic/Angular PWA frontend in this repository under `frontend/`, ready
 - Ionic 9 provides standalone component imports: import `IonMenu`, `IonItem`, `IonAccordion`, etc. directly from `@ionic/angular`.
 - Example: `@Component({ selector: 'app-menu', standalone: true, imports: [IonMenu, IonItem, CommonModule, ...] })`
 - Rationale: Standalone components are the modern pattern in Angular 22+; they reduce boilerplate, improve tree-shaking, and align with Ionic 9's component-first design.
+
+### Testing Frameworks: Jest + Playwright
+- **Unit test runner:** Jest (not Karma) - faster, parallel execution, better for modern Angular.
+- **E2E test runner:** Playwright - browser-level validation for responsive/menu/navigation behavior.
+- **Configuration:** `jest.config.js` + `setup-jest.ts` in `frontend/` root.
+- **E2E configuration:** `playwright.config.ts` and tests under `frontend/e2e/`.
+- **Test location:** `*.spec.ts` files co-located with components.
+- **Testing utilities:** Angular `TestBed`, `ComponentFixture`, plus Jest matchers and mocks.
+- **Coverage:** Aim for >80% on new components. Run with `npm test` or `npm test -- --coverage`.
+- **Mandatory:** Unit tests for all new components (MenuComponent, AppComponent, services, etc.)
 
 ### Forms: ReactiveForms + Signals
 - **All editor forms** (create/edit/search filters) use `ReactiveForms` with `FormBuilder` and `FormGroup`.
@@ -118,16 +129,30 @@ See `frontend/THEME-STRATEGY.md` for complete implementation guide with code exa
 5. Implement search/filter controls aligned with QtSmartStorage list behavior.
 6. Ensure list pages remain feature-specific while table plumbing stays shared.
 
-### FE-05 — First feature slice: ItemGroups
+### FE-06 — Jest test framework setup + component unit tests
+
+1. Initialize Jest as the test runner (not Karma):
+   - Install: `jest`, `@types/jest`, `jest-preset-angular`, `jest-environment-jsdom`
+   - Create `jest.config.js` with proper Angular + Ionic configuration
+   - Create `setup-jest.ts` for Jest initialization
+   - Update `package.json` test script: `"test": "jest"`
+   - Create `tsconfig.spec.json` if needed
+2. Write unit tests for all components:
+   - MenuComponent: test menu structure, `when="lg"` attribute, menu groups/items rendering
+   - AppComponent: test split-pane, router outlet, component integration
+   - MenuService: test signal state, menu loading, error handling
+3. Test MenuService for correct JSON loading and error scenarios.
+4. Verify component imports and dependency injection in tests.
+5. Run tests: `npm test` or with coverage: `npm test -- --coverage`.
+
+### FE-07 — First feature slice: ItemGroups
 
 1. Add feature route/module for ItemGroups.
 2. Create ItemGroups list page using the shared table wrapper pattern.
 3. Wire row click to ItemGroup editor route/component.
 4. Add initial editor component (frame/page) for create/edit flow structure.
 
-### FE-06 — Validation, tests, and handoff readiness
-
-1. Add or extend tests per phase:
+### FE-08 — Theme system (Light/Dark with LocalStorage)
    - component tests for menu rendering and theme toggle,
    - route/config tests for JSON menu mapping,
    - ItemGroups list/editor interaction tests.
@@ -245,3 +270,4 @@ Complete implementation guide with code examples: `frontend/THEME-STRATEGY.md`
 | 2026-09-15 | @Atilla-Perger_afklm + Copilot planning session | Updated project name to `smart-storage-frontend` (from web-smart-storage). Updated FE-01 bootstrap command and directory structure. |
 | 2026-09-15 | @klm96551 + Copilot | **FE-02 COMPLETE**: JSON-driven two-level menu system implemented. MenuComponent with NgModule architecture, MenuService using Signals, menu.json config with 3 groups. Build verified. Commit: 6d30528. Ready for FE-03 (theme system). |
 | 2026-09-15 | @klm96551 + Copilot | **FE-02 REFACTORED**: Converted to standalone components architecture (Angular 22 best practices). MenuComponent and AppComponent use `standalone: true`. Switched to standalone bootstrap with `provideIonicAngular()` in main.ts. Menu restructured: 3 groups (Base Data with 8 items including Payment Methods/Partners/Master Items moved from Management, Documents, System). System menu has Profile, Settings (gear icon), Logout. Build verified 655 KB. Commit: 4aa1254. FE-02 now fully aligned with modern patterns. Ready for FE-03. |
+| 2026-09-15 | @klm96551 + Copilot | **DOCUMENTATION UPDATED**: Added Jest as test framework (replaces Karma). Updated agent, skill, and README files. FE-06 renamed to "Jest test framework setup" with explicit component test requirements. New FE-07 planned for first ItemGroups feature slice. Added comprehensive testing guidelines: test file location, commands, coverage targets, mandatory component tests for MenuComponent, AppComponent, MenuService. Created `jest.config.js`, `setup-jest.ts`, `menu.component.spec.ts`. Jest initialization in progress. |

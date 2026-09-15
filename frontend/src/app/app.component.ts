@@ -1,15 +1,42 @@
 import { Component } from '@angular/core';
-import { IonApp, IonRouterOutlet } from '@ionic/angular';
-import { MenuComponent } from './core/layout/menu.component';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import {
+  IonAccordion,
+  IonAccordionGroup,
+  IonApp,
+  IonContent,
+  IonIcon,
+  IonItem,
+  IonLabel,
+  IonList,
+  IonMenu,
+  IonRouterOutlet,
+  IonSplitPane
+} from '@ionic/angular';
+import { MenuService } from './core/config/menu.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
   styleUrls: ['app.component.scss'],
   standalone: true,
-  imports: [IonApp, IonRouterOutlet, MenuComponent]
+  imports: [
+    CommonModule,
+    RouterModule,
+    IonAccordion,
+    IonAccordionGroup,
+    IonApp,
+    IonContent,
+    IonIcon,
+    IonItem,
+    IonLabel,
+    IonList,
+    IonMenu,
+    IonRouterOutlet,
+    IonSplitPane
+  ]
 })
 export class AppComponent {
-  constructor() {}
+  constructor(public menuService: MenuService) {}
 }
-

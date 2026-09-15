@@ -72,15 +72,78 @@ frontend/
         theme.scss
 ```
 
+## Key Documentation Files
+
+- **[Agent Implementation Plan](../.github/agents/frontend-ionic-kickoff.agent.md)** — Phase tracking table, detailed implementation steps per phase, technology stack decisions, changelog
+- **[Frontend Skill Guide](../.github/skills/frontend-ionic-kickoff/SKILL.md)** — Quick reference for phases, testing expectations, artifact links
+- **[Jest Testing Setup](./JEST-SETUP.md)** — Complete Jest configuration reference, component/service test templates, mocking patterns, troubleshooting
+- **[Theme Strategy](./THEME-STRATEGY.md)** — Light/dark theme implementation with CSS variables, logo-inspired palette (Blue #2F71A2, Orange #FF9933)
+
 ## Development Expectations
 
 - Keep each phase small and commit at phase end.
-- Add or update component tests together with implementation.
-- Run build and relevant tests before each phase commit.
+- **Add unit tests for every new component** — test file: `component.spec.ts` co-located.
+- Run tests and build before each phase commit.
 - Perform manual UI verification for responsive/menu/theme/list-detail behavior.
 - **Components:** All components are **standalone** (`standalone: true`). Import Ionic components directly from `@ionic/angular` in each component's `imports` array. Do NOT declare components in NgModule.
 - **Forms:** Use ReactiveForms with `FormBuilder` and `FormGroup` for all editor/filter forms. Use Signals selectively for component UI state (theme, loading, menu expanded) where reactive side effects provide significant benefit.
 - **Avoid:** Template-based ngModel for editors, NgModule-based component declarations, and pure-Signal-based forms (not yet stable enough).
+
+## Testing Frameworks: Jest + Playwright
+
+**Unit tests:** Jest (configured in `jest.config.js`)  
+**E2E tests:** Playwright (configured in `playwright.config.ts`)
+
+**See detailed setup guide:** [`JEST-SETUP.md`](./JEST-SETUP.md) — complete reference with component/service test templates, configuration, troubleshooting
+
+**Commands:**
+```bash
+npm test                          # Run all tests
+npm test -- --coverage           # Coverage report (generates coverage/ directory)
+npm test -- --watch              # Watch mode during development
+npm test -- menu.component       # Run specific test file
+npm run test:e2e                 # Run Playwright E2E tests
+npm run test:ci                  # Unit + E2E
+```
+
+**Test location:** `src/app/**/*.spec.ts` (co-located with components)
+
+**Mandatory:** Every new component and service must have unit tests:
+- ✅ MenuComponent tests (menu structure, when="lg", rendering)
+- ✅ AppComponent tests (split-pane, routing outlet)
+- ✅ MenuService tests (Signals, JSON loading, error handling)
+- ✅ ThemeService tests (Signal state, LocalStorage persistence)
+- ✅ Feature component tests (list pages, editors, routing)
+
+**Coverage target:** >80% on new code
+
+**Example test structure:**
+```typescript
+describe('MenuComponent', () => {
+  let component: MenuComponent;
+  let fixture: ComponentFixture<MenuComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [MenuComponent],
+      providers: [{ provide: MenuService, useValue: mockMenuService }]
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(MenuComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+
+  it('should render menu with when="lg"', () => {
+    const menu = fixture.nativeElement.querySelector('ion-menu');
+    expect(menu.getAttribute('when')).toBe('lg');
+  });
+});
+```
 
 ## Color Palette for Themes
 
@@ -116,4 +179,3 @@ All Ionic components automatically use these variables. Switch themes with a sin
 ## Future Repository Split
 
 The frontend is intentionally started in this repository. It may be moved later to a separate dedicated frontend repository, but this is not part of the current phase.
-

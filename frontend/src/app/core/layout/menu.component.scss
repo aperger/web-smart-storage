@@ -1,3 +1,7 @@
+:host {
+  display: contents;
+}
+
 ion-item {
   &.active {
     --background: var(--ion-color-secondary-shade);

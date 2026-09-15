@@ -7,7 +7,7 @@ import { MenuConfig, MenuGroup } from './menu.model';
   providedIn: 'root'
 })
 export class MenuService {
-  private readonly MENU_CONFIG_URL = 'assets/config/menu.json';
+  private readonly MENU_CONFIG_URL = '/assets/config/menu.json';
 
   menuGroups = signal<MenuGroup[]>([]);
   isLoading = signal(false);

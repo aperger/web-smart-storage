@@ -83,6 +83,40 @@ Use this skill when:
 
 - Agent plan: `.github/agents/frontend-ionic-kickoff.agent.md`
 - Frontend docs: `frontend/README.md`
+- Frontend theme strategy: `frontend/THEME-STRATEGY.md`
+- Jest config: `frontend/jest.config.js`
+- Jest setup: `frontend/setup-jest.ts`
+- Playwright config: `frontend/playwright.config.ts`
+
+## Testing Strategy
+
+**Frameworks:** Jest + Playwright
+- **Jest (unit):** faster, parallel execution, better modern Angular integration.
+- **Playwright (e2e):** browser-level checks for menu visibility, navigation and responsive behavior.
+
+**Test files:** Co-located with components as `*.spec.ts`.
+
+**Running tests:**
+```bash
+npm test                          # Run all tests
+npm test -- --coverage           # Run with coverage report
+npm test -- --watch              # Watch mode
+npm run test:e2e                 # Run Playwright e2e tests
+npm run test:ci                  # Unit + e2e
+```
+
+**Mandatory gates per phase:**
+1. Component unit tests written and passing
+2. Service/integration tests for new features
+3. Coverage >80% for new code
+4. `npm run build` succeeds
+5. `npm test` passes
+
+**Component tests required for:**
+- All new standalone components (MenuComponent, AppComponent, etc.)
+- All services (MenuService, ThemeService, etc.)
+- Router integration (verify routes wired correctly)
+- Ionic component integration (split-pane, menu, headers, etc.)
 
 ## Change Tracking
 
@@ -90,4 +124,3 @@ When requirements shift, update:
 1. The phase table in the agent file.
 2. The changelog entry at the end of the agent file.
 3. Commit all doc changes with a single conventional commit message (e.g., `docs(frontend): update project name and bootstrap command`).
-

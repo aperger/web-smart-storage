@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { IonMenu, IonHeader, IonToolbar, IonTitle, IonContent, IonAccordion, IonAccordionGroup, IonList, IonItem, IonIcon, IonLabel } from '@ionic/angular';
+import { IonContent, IonAccordion, IonAccordionGroup, IonList, IonItem, IonIcon, IonLabel } from '@ionic/angular';
 import { MenuService } from '../../core/config/menu.service';
 
 @Component({
@@ -12,10 +12,6 @@ import { MenuService } from '../../core/config/menu.service';
   imports: [
     CommonModule,
     RouterModule,
-    IonMenu,
-    IonHeader,
-    IonToolbar,
-    IonTitle,
     IonContent,
     IonAccordion,
     IonAccordionGroup,

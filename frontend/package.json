@@ -8,7 +8,12 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test",
+    "test": "jest",
+    "test:unit": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:e2e": "npx playwright install && playwright test",
+    "test:ci": "npm run test:unit && npm run test:e2e",
     "lint": "ng lint"
   },
   "private": true,
@@ -38,12 +43,16 @@
     "@angular/language-service": "22.0.1",
     "@capacitor/cli": "8.5.2",
     "@ionic/angular-toolkit": "^13.0.0",
+    "@playwright/test": "^1.57.0",
+    "@types/jest": "^30.0.0",
     "angular-eslint": "22.0.0",
     "eslint": "^9.16.0",
+    "jest": "^30.5.1",
+    "jest-environment-jsdom": "^30.5.1",
+    "jest-preset-angular": "^17.0.0",
     "jsdom": "^26.0.0",
     "typescript": "~6.0.0",
-    "typescript-eslint": "^8.61.0",
-    "vitest": "^4.0.8"
+    "typescript-eslint": "^8.61.0"
   },
   "description": "An Ionic project"
 }
