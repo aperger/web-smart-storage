@@ -1,0 +1,85 @@
+{
+  "menuGroups": [
+    {
+      "id": "base",
+      "label": "Base Data",
+      "icon": "folder-outline",
+      "items": [
+        {
+          "id": "countries",
+          "label": "Countries",
+          "route": "/countries",
+          "icon": "globe-outline"
+        },
+        {
+          "id": "vatkeys",
+          "label": "VAT Keys",
+          "route": "/vatkeys",
+          "icon": "receipt-outline"
+        },
+        {
+          "id": "currencies",
+          "label": "Currencies",
+          "route": "/currencies",
+          "icon": "cash-outline"
+        },
+        {
+          "id": "itemgroups",
+          "label": "Item Groups",
+          "route": "/itemgroups",
+          "icon": "layers-outline"
+        },
+        {
+          "id": "itemtypes",
+          "label": "Item Types",
+          "route": "/itemtypes",
+          "icon": "list-outline"
+        }
+      ]
+    },
+    {
+      "id": "management",
+      "label": "Management",
+      "icon": "settings-outline",
+      "items": [
+        {
+          "id": "paymentmethods",
+          "label": "Payment Methods",
+          "route": "/paymentmethods",
+          "icon": "card-outline"
+        },
+        {
+          "id": "partners",
+          "label": "Partners",
+          "route": "/partners",
+          "icon": "people-outline"
+        },
+        {
+          "id": "masteritems",
+          "label": "Master Items",
+          "route": "/masteritems",
+          "icon": "bookmark-outline"
+        }
+      ]
+    },
+    {
+      "id": "documents",
+      "label": "Documents",
+      "icon": "document-outline",
+      "items": [
+        {
+          "id": "invoices",
+          "label": "Invoices",
+          "route": "/invoices",
+          "icon": "document-text-outline"
+        },
+        {
+          "id": "nav-invoices",
+          "label": "NAV Invoices",
+          "route": "/nav-invoices",
+          "icon": "cloud-upload-outline"
+        }
+      ]
+    }
+  ]
+}

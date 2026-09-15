@@ -3,11 +3,11 @@ spring:
     driverClassName: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/SmartStorageDev
     username: root
-    password: kiskacsa
+    password: ToadFace01
     
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: validate
 
 debug: true
 

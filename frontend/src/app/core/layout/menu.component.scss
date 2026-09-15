@@ -1,0 +1,6 @@
+ion-item {
+  &.active {
+    --background: var(--ion-color-secondary-shade);
+    --color: var(--ion-color-secondary);
+  }
+}
