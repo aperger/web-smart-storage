@@ -32,11 +32,13 @@ new; every new simple reference entity must mirror this exactly.
 
 ### Phase 1 — Finish simple reference/master-data entities (read-mostly CRUD)
 Entities already partially wired (check current state before starting each):
-- `VatKey` — domain, data, infra, and api-service files already exist; verify behavior and keep
-  it as the first Phase 1 status check before new implementation work.
-- `Currency`, `ItemGroup`, `ItemType`, `PaymentMethod` — domain model/port and data entities
-  exist; some infra mappers exist (`ItemGroupMapper`, `ItemTypeMapper`); repository/service/
-  adapter and the full api-service layer are still missing for most.
+- `VatKey` — fully wired and validated in the repo; service filters are implemented and the
+  corresponding infra/API tests pass.
+- `Currency` — fully wired and validated in the repo; service filters are implemented and the
+  corresponding infra/API tests pass.
+- `ItemGroup`, `ItemType`, `PaymentMethod` — domain model/port and data entities exist; some
+  infra mappers exist (`ItemGroupMapper`, `ItemTypeMapper`); repository/service/adapter and the
+  full api-service layer are still missing for most.
 - `Storage` — present in the Qt desktop app's Basics menu, but still missing the Java domain/data/
   infra/api-service slice in this repository.
 
